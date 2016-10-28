@@ -1,7 +1,7 @@
-URL: http://localhost:8181/restconf/config/opendaylight-inventory:nodes/node/openflow:1001/table/0/flow/L2_Rule_00:00:00:00:00:17->00:00:00:00:00:03
+URL: http://localhost:8181/restconf/config/opendaylight-inventory:nodes/node/openflow:s1/table/0/flow/L2_Rule_00:00:00:00:00:09->00:00:00:00:00:03
 
 <flow xmlns="urn:opendaylight:flow:inventory">
-<id>L2_Rule_00:00:00:00:00:17->00:00:00:00:00:03</id>
+<id>L2_Rule_00:00:00:00:00:09->00:00:00:00:00:03</id>
 <instructions>
 <instruction>
 <order>0</order>
@@ -15,7 +15,7 @@ URL: http://localhost:8181/restconf/config/opendaylight-inventory:nodes/node/ope
 <action>
 <order>1</order>
 <output-action>
-<output-node-connector>NORMAL</output-node-connector>
+<output-node-connector>FLOOD</output-node-connector>
 <max-length>65535</max-length>
 </output-action>
 </action>
@@ -23,7 +23,7 @@ URL: http://localhost:8181/restconf/config/opendaylight-inventory:nodes/node/ope
 </instruction>
 </instructions>
 <barrier>true</barrier>
-<flow-name>L2_Rule_00:00:00:00:00:17->00:00:00:00:00:03</flow-name>
+<flow-name>L2_Rule_00:00:00:00:00:09->00:00:00:00:00:03</flow-name>
 <match>
 <ethernet-match>
 <ethernet-destination>
