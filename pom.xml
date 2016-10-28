@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  
+  <parent>
+    <groupId>org.opendaylight.odlparent</groupId>
+    <artifactId>odlparent</artifactId>
+    <version>1.6.1-Beryllium-SR1</version>
+    <relativePath/>
+  </parent>
+  
+	<groupId>com.talentica.sdn</groupId>
+	<artifactId>odl</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>pom</packaging>
+	
+	<name>odl</name>
+	
+	<properties>
+    <nexusproxy>http://nexus.opendaylight.org/content</nexusproxy>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.source>1.7</maven.compiler.source>
+    <maven.compiler.target>1.7</maven.compiler.target>
+    <checkstyle.skip>true</checkstyle.skip>
+    <maven.javadoc.skip>true</maven.javadoc.skip>
+    <codeGeneratorPath>src/main/yang-gen-code</codeGeneratorPath>
+    <configCodeGeneratorPath>src/main/yang-gen-config</configCodeGeneratorPath>
+
+    <switch.version>0.0.1-SNAPSHOT</switch.version>
+    <karaf-branding.version>1.0.0-SNAPSHOT</karaf-branding.version>
+
+    <switch.configfile>49-odl-switch-config.xml</switch.configfile>
+
+    <!-- ODL Controller Dependency Versions -->
+    <yang-binding.version>0.8.1-Beryllium-SR1</yang-binding.version>
+    <maven-sal-api-gen-plugin.version>0.8.1-Beryllium-SR1</maven-sal-api-gen-plugin.version>
+    <yangtools.version>0.8.1-Beryllium-SR1</yangtools.version>
+    <yang.jmx.version>0.4.1-Beryllium-SR1</yang.jmx.version>
+    <config-api.version>0.4.1-Beryllium-SR1</config-api.version>
+    <sal-binding.version>1.3.1-Beryllium-SR1</sal-binding.version>
+    <ietf-topology.version>2013.10.21.8.1-Beryllium-SR1</ietf-topology.version>
+    <ietf-inet-types.version>2010.09.24.8.1-Beryllium-SR1</ietf-inet-types.version>
+    <ietf-yang-types.version>2010.09.24.8.1-Beryllium-SR1</ietf-yang-types.version>
+    <yang-ext.version>2013.09.07.8.1-Beryllium-SR1</yang-ext.version>
+    <controller-model.version>1.3.1-Beryllium-SR1</controller-model.version>
+
+    <!-- Southbound plugin versions -->
+    <openflowplugin.version>0.2.1-Beryllium-SR1</openflowplugin.version>
+    <sal-netconf-connector.version>1.3.1-Beryllium-SR1</sal-netconf-connector.version>
+
+    <!-- Karaf and maven dependencies -->
+    <karaf.version>3.0.3</karaf.version>
+    <build.plugins.plugin.version>1.9.1</build.plugins.plugin.version>
+    <opendaylight-karaf-resources.version>1.6.1-Beryllium-SR1</opendaylight-karaf-resources.version>
+
+    <!-- Karaf feature version -->
+    <feature.l2switch.version>0.3.1-Beryllium-SR1</feature.l2switch.version>
+    <feature.dlux.version>0.3.1-Beryllium-SR1</feature.dlux.version>
+    <feature.aaa.version>0.3.1-Beryllium-SR1</feature.aaa.version>
+    <feature.netconf.connector.version>1.0.1-Beryllium-SR1</feature.netconf.connector.version>
+    <feature.restconf.version>1.3.1-Beryllium-SR1</feature.restconf.version>
+    <feature.mdsal.version>1.3.1-Beryllium-SR1</feature.mdsal.version>
+    <feature.openflowplugin.version>0.2.1-Beryllium-SR1</feature.openflowplugin.version>
+  </properties>
+  
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <configuration>
+            <source>${maven.compiler.source}</source>
+            <target>${maven.compiler.target}</target>
+            <testSource>${maven.compiler.source}</testSource>
+            <testTarget>${maven.compiler.target}</testTarget>
+          </configuration>
+        </plugin>
+        
+        <plugin>
+        	<groupId>org.eclipse.m2e</groupId>
+        	<artifactId>lifecycle-mapping</artifactId>
+        	<version>1.0.0</version>
+        	<configuration>
+        		<lifecycleMappingMetadata>
+        			<pluginExecutions>
+        				<pluginExecution>
+        					<pluginExecutionFilter>
+        						<groupId>org.jacoco</groupId>
+        						<artifactId>jacoco-maven-plugin</artifactId>
+        						<versionRange>[0.7.2.201409121644,)</versionRange>
+        						<goals>
+        							<goal>prepare-agent</goal>
+        						</goals>
+        					</pluginExecutionFilter>
+        					<action>
+        						<ignore/>
+        					</action>
+        				</pluginExecution>
+        				<pluginExecution>
+        					<pluginExecutionFilter>
+        						<groupId>org.opendaylight.yangtools</groupId>
+        						<artifactId>yang-maven-plugin</artifactId>
+        						<versionRange>[0.8.1-Beryllium-SR1,)</versionRange>
+        						<goals>
+        							<goal>generate-sources</goal>
+        						</goals>
+        					</pluginExecutionFilter>
+        					<action>
+        						<ignore/>
+        					</action>
+        				</pluginExecution>
+        			</pluginExecutions>
+        		</lifecycleMappingMetadata>
+        	</configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+  
+  <repositories>
+    <!-- OpenDayLight Released artifact -->
+    <repository>
+      <id>opendaylight-release</id>
+      <name>opendaylight-release</name>
+      <url>http://nexus.opendaylight.org/content/repositories/opendaylight.release/</url>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+    <!-- OpenDayLight Snapshot artifact -->
+    <repository>
+      <id>opendaylight-snapshot</id>
+      <name>opendaylight-snapshot</name>
+      <url>http://nexus.opendaylight.org/content/repositories/opendaylight.snapshot/</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
+  
+  <pluginRepositories>
+    <pluginRepository>
+      <id>opendaylight-release</id>
+      <name>opendaylight-release</name>
+      <url>http://nexus.opendaylight.org/content/repositories/opendaylight.release/</url>
+      <snapshots>
+          <enabled>false</enabled>
+      </snapshots>
+      <releases>
+          <enabled>true</enabled>
+      </releases>
+    </pluginRepository>
+    <pluginRepository>
+      <id>opendaylight-snapshot</id>
+      <name>opendaylight-snapshot</name>
+      <url>http://nexus.opendaylight.org/content/repositories/opendaylight.snapshot/</url>
+      <snapshots>
+          <enabled>true</enabled>
+      </snapshots>
+      <releases>
+          <enabled>false</enabled>
+      </releases>
+  </pluginRepository>
+  </pluginRepositories>
+  
+  <dependencies>
+    <!-- Dependencies for the Yang and configs -->
+    <dependency>
+      <groupId>org.opendaylight.mdsal.model</groupId>
+      <artifactId>ietf-yang-types</artifactId>
+      <version>${ietf-yang-types.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.opendaylight.mdsal.model</groupId>
+      <artifactId>ietf-inet-types</artifactId>
+      <version>${ietf-inet-types.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.opendaylight.mdsal.model</groupId>
+      <artifactId>yang-ext</artifactId>
+      <version>${yang-ext.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.opendaylight.yangtools</groupId>
+      <artifactId>yang-common</artifactId>
+      <version>${yangtools.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.opendaylight.mdsal</groupId>
+      <artifactId>yang-binding</artifactId>
+      <version>${yang-binding.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.opendaylight.controller</groupId>
+      <artifactId>config-api</artifactId>
+      <version>${config-api.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.opendaylight.controller</groupId>
+      <artifactId>sal-binding-config</artifactId>
+      <version>${sal-binding.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.opendaylight.controller</groupId>
+      <artifactId>sal-binding-api</artifactId>
+      <version>${sal-binding.version}</version>
+    </dependency>
+  </dependencies>
+
+	<modules>
+      <module>odl-switch</module>
+      <module>odl-features</module>
+      <module>odl-distribution</module>
+	</modules>
+
+</project>

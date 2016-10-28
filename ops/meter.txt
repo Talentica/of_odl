@@ -1,0 +1,21 @@
+http://localhost:8181/restconf/config/opendaylight-inventory:nodes/node/openflow:1/meter/1
+
+<meter 
+    xmlns="urn:opendaylight:flow:inventory">
+    <meter-id>1</meter-id>
+    <container-name>mymeter</container-name>
+    <meter-name>mymeter</meter-name>
+    <flags>meter-kbps</flags>
+    <meter-band-headers>
+        <meter-band-header>
+            <band-id>0</band-id>
+            <band-rate>50000</band-rate>
+            <meter-band-types>
+                <flags>ofpmbt-drop</flags>
+            </meter-band-types>
+            <band-burst-size>0</band-burst-size>
+            <drop-rate>10000</drop-rate>
+            <drop-burst-size>0</drop-burst-size>
+        </meter-band-header>
+    </meter-band-headers>
+</meter>

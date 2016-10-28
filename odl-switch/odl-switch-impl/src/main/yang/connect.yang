@@ -1,0 +1,24 @@
+module connect {
+	yang-version 1;
+	namespace "urn:opendaylight:params:xml:ns:yang:connect";
+	prefix "connect";
+	revision "2015-01-05" {
+		description "Initial revision of connect model";
+	}
+
+	rpc connection {
+		input {
+			leaf mac {
+				type string;
+			}
+			leaf ipAddress {
+				type string;
+			}
+		}
+		output {
+			leaf exist {
+				type string;
+			}
+		}
+	}
+}

@@ -1,0 +1,67 @@
+module base-packet {
+  yang-version 1;
+  namespace "urn:opendaylight:packet:basepacket";
+  prefix bpacket;
+
+  import ietf-yang-types {prefix yang; revision-date 2010-09-24;}
+  import opendaylight-inventory {prefix inv;revision-date "2013-08-19";}
+  import packet-processing {prefix pprocessing; revision-date 2013-07-09;}
+  import opendaylight-match-types {prefix match-type;revision-date "2013-10-26";}
+  import opendaylight-table-types {prefix table-type;revision-date "2013-10-26";}
+  import opendaylight-flow-types {prefix flow-type;revision-date "2013-10-26";}
+
+
+  revision 2014-05-28 {
+    description
+      "Base packet module draft.";
+  }
+
+  grouping packet-payload {
+    leaf payload {
+      type binary;
+    }
+  }
+
+  grouping packet-fields {
+    leaf payload-offset {
+      type int32;
+    }
+    leaf payload-length {
+      type int32;
+    }
+  }
+
+  grouping raw-packet-fields {
+    leaf ingress {
+      type inv:node-connector-ref;
+    }
+    leaf connection-cookie {
+      type pprocessing:connection-cookie;
+    }
+    leaf flow-cookie {
+      type flow-type:flow-cookie;
+    }
+    leaf table-id {
+      type table-type:table-id;
+    }
+    leaf packet-in-reason {
+      type identityref {
+        base pprocessing:packet-in-reason;
+      }
+    }
+    container match {
+      uses match-type:match;
+    }
+    uses packet-fields;
+  }
+
+  grouping packet-chain-grp {
+    list packet-chain {
+      choice packet {
+         case raw-packet {
+           uses raw-packet-fields;
+         }
+      }
+    }
+  }
+}
