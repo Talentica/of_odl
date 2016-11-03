@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.talentica.sdn.odlswitch.impl;
+package com.talentica.sdn.odlofsoftswitch.impl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +18,6 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.action.types.rev131112.acti
 import org.opendaylight.yang.gen.v1.urn.opendaylight.action.types.rev131112.action.action.SetDlSrcActionCaseBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.action.types.rev131112.action.action.SetNwDstActionCaseBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.action.types.rev131112.action.action.SetNwSrcActionCaseBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.action.types.rev131112.action.action.SetQueueActionCaseBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.action.types.rev131112.action.action.SetTpDstActionCaseBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.action.types.rev131112.action.action.SetTpSrcActionCaseBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.action.types.rev131112.action.action.output.action._case.OutputActionBuilder;
@@ -26,7 +25,6 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.action.types.rev131112.acti
 import org.opendaylight.yang.gen.v1.urn.opendaylight.action.types.rev131112.action.action.set.dl.src.action._case.SetDlSrcActionBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.action.types.rev131112.action.action.set.nw.dst.action._case.SetNwDstActionBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.action.types.rev131112.action.action.set.nw.src.action._case.SetNwSrcActionBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.action.types.rev131112.action.action.set.queue.action._case.SetQueueActionBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.action.types.rev131112.action.action.set.tp.dst.action._case.SetTpDstActionBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.action.types.rev131112.action.action.set.tp.src.action._case.SetTpSrcActionBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.action.types.rev131112.action.list.Action;
@@ -35,6 +33,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.action.types.rev131112.acti
 import org.opendaylight.yang.gen.v1.urn.opendaylight.action.types.rev131112.address.address.Ipv4Builder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.flow.inventory.rev130819.FlowCapableNode;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.flow.inventory.rev130819.FlowId;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.flow.types.rev131026.instruction.instruction.meter._case.MeterBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.flow.inventory.rev130819.tables.Table;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.flow.inventory.rev130819.tables.TableKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.flow.inventory.rev130819.tables.table.Flow;
@@ -43,6 +42,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.flow.inventory.rev130819.ta
 import org.opendaylight.yang.gen.v1.urn.opendaylight.flow.types.rev131026.flow.InstructionsBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.flow.types.rev131026.flow.MatchBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.flow.types.rev131026.instruction.instruction.ApplyActionsCaseBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.flow.types.rev131026.instruction.instruction.MeterCaseBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.flow.types.rev131026.instruction.instruction.apply.actions._case.ApplyActionsBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.flow.types.rev131026.instruction.list.Instruction;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.flow.types.rev131026.instruction.list.InstructionBuilder;
@@ -52,13 +52,14 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.inventory.rev130819.NodeId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.inventory.rev130819.Nodes;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.inventory.rev130819.nodes.Node;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.inventory.rev130819.nodes.NodeKey;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.meter.types.rev130918.MeterId;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
-import com.talentica.sdn.odlswitch.impl.utils.CommonUtils;
-import com.talentica.sdn.odlswitch.impl.utils.Constants;
+import com.talentica.sdn.odlofsoftswitch.impl.utils.CommonUtils;
+import com.talentica.sdn.odlofsoftswitch.impl.utils.Constants;
 
 /**
  * * @author narenderK
@@ -67,44 +68,29 @@ import com.talentica.sdn.odlswitch.impl.utils.Constants;
 public class FlowEngine {
 	
 	Logger log = LoggerFactory.getLogger(this.getClass());
-	
+		
 	/**
 	 * 
 	 * @param dataBroker
 	 * @param nodeId
-	 * @param srcMac
-	 * @param dstMac
-	 * @param ingressNodeConnectorId
-	 * @param role
-	 * @param dstPort
 	 * @throws Exception
 	 */
-	public void programL2Flow(DataBroker dataBroker, NodeId nodeId, String srcMac, String dstMac, String role) throws Exception {
+	public void programFloodARPFlow(DataBroker dataBroker, NodeId nodeId) throws Exception {
 		MatchBuilder matchBuilder = new MatchBuilder();
-		CommonUtils.createEthMatch(matchBuilder, new MacAddress(srcMac), new MacAddress(dstMac), null);
+		CommonUtils.createEthTypeARPMatch(matchBuilder);
 		
 		ActionBuilder ab = new ActionBuilder();
-		List<Action> actionList = new ArrayList<>();
+		List<Action> actionList = Lists.newArrayList();
 
 		// Set output action
 		OutputActionBuilder output = new OutputActionBuilder();
-		Uri value = new Uri(Constants.OPENFLOW_FORWARDING_ACTION_NORMAL);
+		Uri value = new Uri(Constants.OPENFLOW_FORWARDING_ACTION_FLOOD);
 	    output.setOutputNodeConnector(value);
 		output.setMaxLength(65535);
 		ab.setAction(new OutputActionCaseBuilder().setOutputAction(output.build()).build());
-		ab.setOrder(1);
+		ab.setOrder(0);
+		ab.setKey(new ActionKey(0));
 		actionList.add(ab.build());
-		
-		ActionBuilder ab2 = new ActionBuilder();
-		SetQueueActionBuilder setQueueActionBuilder = new SetQueueActionBuilder();
-		if(role.equalsIgnoreCase(Constants.ROLE_EMPLOYEE)){
-			setQueueActionBuilder.setQueueId(1L);
-		}else{
-			setQueueActionBuilder.setQueueId(2L);
-		}
-        ab2.setAction(new SetQueueActionCaseBuilder().setSetQueueAction(setQueueActionBuilder.build()).build());
-        ab2.setOrder(0);
-        actionList.add(ab2.build());
 
 		// Create Apply Actions Instruction
 		InstructionsBuilder isb = new InstructionsBuilder();
@@ -117,6 +103,89 @@ public class FlowEngine {
 		ib.setOrder(0);
 		ib.setKey(new InstructionKey(0));
 		instructions.add(ib.build());
+
+		// Create Flow
+		FlowBuilder flowBuilder = new FlowBuilder();
+		flowBuilder.setMatch(matchBuilder.build());
+
+		String flowId = "FLOOD_ARP_" + nodeId.getValue();
+		flowBuilder.setId(new FlowId(flowId));
+		FlowKey key = new FlowKey(new FlowId(flowId));
+		flowBuilder.setBarrier(true);
+		flowBuilder.setTableId((short) 0);
+		flowBuilder.setKey(key);
+		flowBuilder.setPriority(2);
+		flowBuilder.setFlowName(flowId);
+		flowBuilder.setHardTimeout(0);
+		flowBuilder.setIdleTimeout(0);
+		
+		flowBuilder.setInstructions(isb.setInstruction(instructions).build());
+
+		InstanceIdentifier<Flow> flowIID = InstanceIdentifier.builder(Nodes.class)
+				.child(Node.class, new NodeKey(nodeId)).augmentation(FlowCapableNode.class)
+				.child(Table.class, new TableKey(flowBuilder.getTableId())).child(Flow.class, flowBuilder.getKey())
+				.build();
+		CommonUtils.writeData(dataBroker, LogicalDatastoreType.CONFIGURATION, flowIID, flowBuilder.build(),
+				true);
+		
+	}
+	
+	/**
+	 * 
+	 * @param dataBroker
+	 * @param nodeId
+	 * @param srcMac
+	 * @param dstMac
+	 * @param ingressNodeConnectorId
+	 * @param role
+	 * @param dstPort
+	 * @throws Exception
+	 */
+	public void programL2Flow(DataBroker dataBroker, NodeId nodeId, Uri outputPort, String srcMac, String dstMac, String role) throws Exception {
+		MatchBuilder matchBuilder = new MatchBuilder();
+		CommonUtils.createEthMatch(matchBuilder, new MacAddress(srcMac), new MacAddress(dstMac), null);
+		
+		ActionBuilder ab = new ActionBuilder();
+		List<Action> actionList = new ArrayList<>();
+
+		// Set output action
+		OutputActionBuilder output = new OutputActionBuilder();
+	    output.setOutputNodeConnector(outputPort);
+		output.setMaxLength(65535);
+		ab.setAction(new OutputActionCaseBuilder().setOutputAction(output.build()).build());
+		ab.setOrder(1);
+		actionList.add(ab.build());
+		
+		// Create Apply Actions Instruction
+
+		ApplyActionsBuilder aab = new ApplyActionsBuilder();
+		aab.setAction(actionList);
+
+		InstructionsBuilder isb = new InstructionsBuilder();
+		List<Instruction> instructions = Lists.newArrayList();
+
+		InstructionBuilder ib = new InstructionBuilder();
+		ib.setInstruction(new ApplyActionsCaseBuilder().setApplyActions(aab.build()).build());
+		ib.setOrder(0);
+		ib.setKey(new InstructionKey(0));
+
+		MeterCaseBuilder meterCaseBuilder = new MeterCaseBuilder();
+		MeterBuilder meterBuilder = new MeterBuilder();
+		if (role.equalsIgnoreCase(Constants.ROLE_GUEST)) {
+			meterBuilder.setMeterId(new MeterId(1L));
+		} else {
+			meterBuilder.setMeterId(new MeterId(2L));
+		}
+
+		meterCaseBuilder.setMeter(meterBuilder.build());
+
+		InstructionBuilder ib2 = new InstructionBuilder();
+		ib2.setInstruction(meterCaseBuilder.build());
+		ib2.setOrder(1);
+		ib2.setKey(new InstructionKey(1));
+
+		instructions.add(ib.build());
+		instructions.add(ib2.build());
 
 		// Create Flow
 		FlowBuilder flowBuilder = new FlowBuilder();
@@ -153,7 +222,7 @@ public class FlowEngine {
 	 * @param dstPort
 	 * @throws Exception
 	 */
-	public void addforwardflow(DataBroker dataBroker, NodeConnectorId ingressNodeConnectorId, String srcMac, String dstMac, String srcIp, String dstIp,
+	public void addforwardflow(DataBroker dataBroker, NodeId nodeId, Uri outputPort, String srcMac, String dstMac, String srcIp, String dstIp,
 			int dstPort) throws Exception {
 		MatchBuilder matchBuilder2 = new MatchBuilder();
 		CommonUtils.createEthMatch(matchBuilder2, new MacAddress(srcMac), new MacAddress(dstMac), null);
@@ -166,8 +235,7 @@ public class FlowEngine {
 		// Set output action
 		ActionBuilder ab1 = new ActionBuilder();
 		OutputActionBuilder output = new OutputActionBuilder();
-		Uri value = new Uri(Constants.OPENFLOW_FORWARDING_ACTION_NORMAL);
-	    output.setOutputNodeConnector(value);
+	    output.setOutputNodeConnector(outputPort);
 		output.setMaxLength(65535);
 		ab1.setAction(new OutputActionCaseBuilder().setOutputAction(output.build()).build());
 		ab1.setOrder(3);
@@ -230,7 +298,7 @@ public class FlowEngine {
 		flowBuilder.setInstructions(isb.setInstruction(instructions).build());
 
 		InstanceIdentifier<Flow> flowIID = InstanceIdentifier.builder(Nodes.class)
-				.child(Node.class, new NodeKey(CommonUtils.getNodeId(ingressNodeConnectorId))).augmentation(FlowCapableNode.class)
+				.child(Node.class, new NodeKey(nodeId)).augmentation(FlowCapableNode.class)
 				.child(Table.class, new TableKey(flowBuilder.getTableId())).child(Flow.class, flowBuilder.getKey())
 				.build();
 		CommonUtils.writeData(dataBroker, LogicalDatastoreType.CONFIGURATION, flowIID, flowBuilder.build(), true);
@@ -247,7 +315,7 @@ public class FlowEngine {
 	 * @param dstPort
 	 * @throws Exception
 	 */
-	public void addReverseflow(DataBroker dataBroker, NodeConnectorId ingressNodeConnectorId, String srcMac, String dstMac, String srcIp, String dstIp, int dstPort) throws Exception {
+	public void addReverseflow(DataBroker dataBroker,NodeId nodeId, Uri outputPort, String srcMac, String dstMac, String srcIp, String dstIp, int dstPort) throws Exception {
 		MatchBuilder matchBuilder1 = new MatchBuilder();
 		CommonUtils.createEthMatch(matchBuilder1, new MacAddress(Constants.CAPTIVE_PORTAL_MAC),new MacAddress(srcMac), null);
 		Ipv4Prefix srcip = new Ipv4Prefix(Constants.CAPTIVE_PORTAL_IP + "/32");
@@ -259,8 +327,7 @@ public class FlowEngine {
 		// Set output action
 		ActionBuilder ab1 = new ActionBuilder();
 		OutputActionBuilder output = new OutputActionBuilder();
-		Uri value = new Uri(Constants.OPENFLOW_FORWARDING_ACTION_NORMAL);
-	    output.setOutputNodeConnector(value);
+	    output.setOutputNodeConnector(outputPort);
 		output.setMaxLength(65535);
 		ab1.setAction(new OutputActionCaseBuilder().setOutputAction(output.build()).build());
 		ab1.setOrder(3);
@@ -323,71 +390,10 @@ public class FlowEngine {
 		flowBuilder.setInstructions(isb.setInstruction(instructions).build());
 
 		InstanceIdentifier<Flow> flowIID = InstanceIdentifier.builder(Nodes.class)
-				.child(Node.class, new NodeKey(CommonUtils.getNodeId(ingressNodeConnectorId)))
+				.child(Node.class, new NodeKey(nodeId))
 				.augmentation(FlowCapableNode.class).child(Table.class, new TableKey(flowBuilder.getTableId()))
 				.child(Flow.class, flowBuilder.getKey()).build();
 		CommonUtils.writeData(dataBroker, LogicalDatastoreType.CONFIGURATION, flowIID, flowBuilder.build(), true);
-	}
-	
-	/**
-	 * 
-	 * @param dataBroker
-	 * @param nodeId
-	 * @throws Exception
-	 */
-	public void programFloodARPFlow(DataBroker dataBroker, NodeId nodeId) throws Exception {
-		MatchBuilder matchBuilder = new MatchBuilder();
-		CommonUtils.createEthTypeARPMatch(matchBuilder);
-		
-		ActionBuilder ab = new ActionBuilder();
-		List<Action> actionList = Lists.newArrayList();
-
-		// Set output action
-		OutputActionBuilder output = new OutputActionBuilder();
-		Uri value = new Uri(Constants.OPENFLOW_FORWARDING_ACTION_FLOOD);
-	    output.setOutputNodeConnector(value);
-		output.setMaxLength(65535);
-		ab.setAction(new OutputActionCaseBuilder().setOutputAction(output.build()).build());
-		ab.setOrder(0);
-		ab.setKey(new ActionKey(0));
-		actionList.add(ab.build());
-
-		// Create Apply Actions Instruction
-		InstructionsBuilder isb = new InstructionsBuilder();
-		List<Instruction> instructions = Lists.newArrayList();
-		InstructionBuilder ib = new InstructionBuilder();
-		ApplyActionsBuilder aab = new ApplyActionsBuilder();
-		
-		aab.setAction(actionList);
-		ib.setInstruction(new ApplyActionsCaseBuilder().setApplyActions(aab.build()).build());
-		ib.setOrder(0);
-		ib.setKey(new InstructionKey(0));
-		instructions.add(ib.build());
-
-		// Create Flow
-		FlowBuilder flowBuilder = new FlowBuilder();
-		flowBuilder.setMatch(matchBuilder.build());
-
-		String flowId = "FLOOD_ARP_" + nodeId.getValue();
-		flowBuilder.setId(new FlowId(flowId));
-		FlowKey key = new FlowKey(new FlowId(flowId));
-		flowBuilder.setBarrier(true);
-		flowBuilder.setTableId((short) 0);
-		flowBuilder.setKey(key);
-		flowBuilder.setPriority(2);
-		flowBuilder.setFlowName(flowId);
-		flowBuilder.setHardTimeout(0);
-		flowBuilder.setIdleTimeout(0);
-		
-		flowBuilder.setInstructions(isb.setInstruction(instructions).build());
-
-		InstanceIdentifier<Flow> flowIID = InstanceIdentifier.builder(Nodes.class)
-				.child(Node.class, new NodeKey(nodeId)).augmentation(FlowCapableNode.class)
-				.child(Table.class, new TableKey(flowBuilder.getTableId())).child(Flow.class, flowBuilder.getKey())
-				.build();
-		CommonUtils.writeData(dataBroker, LogicalDatastoreType.CONFIGURATION, flowIID, flowBuilder.build(),
-				true);
-		
 	}
 	
 }

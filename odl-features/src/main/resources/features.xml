@@ -7,7 +7,7 @@
 	<repository>mvn:org.opendaylight.l2switch/features-l2switch/${feature.l2switch.version}/xml/features</repository>
 	<repository>mvn:org.opendaylight.dlux/features-dlux/${feature.dlux.version}/xml/features</repository>
  
-    <feature name="captiveportal" description="captiveportal on odl" version='${project.version}'>
+    <feature name="captiveportal-ovs" description="captiveportal for ovs topology" version='${project.version}'>
         <feature version="${openflowplugin.version}">odl-openflowplugin-southbound</feature>
         <feature version="${openflowplugin.version}">odl-openflowplugin-flow-services</feature>
         <feature version="${feature.mdsal.version}">odl-mdsal-broker</feature>
@@ -16,4 +16,15 @@
         <bundle>mvn:com.talentica.sdn.odl-switch/odl-switch-impl/${switch.version}</bundle>
         <configfile finalname="etc/opendaylight/karaf/${switch.configfile}">mvn:com.talentica.sdn.odl-switch/odl-switch-config/${switch.version}/xml/config</configfile>
       </feature>
+      
+      <feature name="captiveportal-ofsoftswitch" description="captiveportal for ofsoftswitch topology" version='${project.version}'>
+        <feature version="${openflowplugin.version}">odl-openflowplugin-southbound</feature>
+        <feature version="${openflowplugin.version}">odl-openflowplugin-flow-services</feature>
+        <feature version="${feature.mdsal.version}">odl-mdsal-broker</feature>
+        <feature version="${feature.restconf.version}">odl-restconf-all</feature>
+        <feature version="${feature.dlux.version}">odl-dlux-all</feature>
+        <bundle>mvn:com.talentica.sdn.odl-ofsoftswitch/odl-ofsoftswitch-impl/${ofsoftswitch.version}</bundle>
+        <configfile finalname="etc/opendaylight/karaf/${ofsoftswitch.configfile}">mvn:com.talentica.sdn.odl-ofsoftswitch/odl-ofsoftswitch-config/${ofsoftswitch.version}/xml/config</configfile>
+      </feature>
+      
 </features>

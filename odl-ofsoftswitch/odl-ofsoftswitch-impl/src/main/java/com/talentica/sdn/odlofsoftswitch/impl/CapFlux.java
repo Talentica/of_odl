@@ -1,4 +1,4 @@
-package com.talentica.sdn.odlswitch.impl;
+package com.talentica.sdn.odlofsoftswitch.impl;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -10,6 +10,7 @@ import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.sal.binding.api.BindingAwareBroker.RpcRegistration;
 import org.opendaylight.controller.sal.binding.api.NotificationProviderService;
 import org.opendaylight.controller.sal.binding.api.RpcProviderRegistry;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Uri;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.inventory.rev130819.NodeConnectorId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.inventory.rev130819.NodeConnectorRef;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.inventory.rev130819.NodeId;
@@ -22,8 +23,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
-import com.talentica.sdn.odlswitch.impl.utils.CommonUtils;
-import com.talentica.sdn.odlswitch.impl.utils.Constants;
+import com.talentica.sdn.odlofsoftswitch.impl.utils.CommonUtils;
+import com.talentica.sdn.odlofsoftswitch.impl.utils.Constants;
 
 /**
  * @author narenderK
@@ -39,8 +40,10 @@ public class CapFlux implements AutoCloseable, PacketProcessingListener{
 	private static List<String> savedMacs = new ArrayList<>();
 	private static Map<String, String> macToIpMap = new HashMap<>();
     private FlowEngine flowEngine = new FlowEngine();
+    private MeterEngine meterEngine = new MeterEngine();
     private AuthenticationEngine authenticationEngine = new AuthenticationEngine();
     private static Map<String, Boolean> edgeRuleMacFlags = new HashMap<>();
+    private static Map<NodeId,Map<String, NodeConnectorRef>> rules = new HashMap<>();
 	
     /**
      * 
@@ -111,21 +114,42 @@ public class CapFlux implements AutoCloseable, PacketProcessingListener{
 			String srcIP = CommonUtils.rawIPToString(rawSrcIP);
 			byte[] rawDstPort = CommonUtils.extractDstPort(payload);
 			int dstPort = CommonUtils.rawPortToInteger(rawDstPort);
+			
+			if(!rules.containsKey(ingressNodeId)){
+				Map<String, NodeConnectorRef> macTable = new HashMap<>();
+				rules.put(ingressNodeId, macTable);
+			}
+			
+			if(!rules.get(ingressNodeId).containsKey(srcMac)){
+				rules.get(ingressNodeId).put(srcMac, ingressNodeConnectorRef);
+			}
 
 			if (!macToIpMap.containsKey(srcIP)) {
 				macToIpMap.put(srcIP, srcMac);
 			}
 
 			String role = authenticationEngine.getSrcMacRole(srcMac);
+			this.meterEngine.createGuestMeter(dataBroker, ingressNodeId);
+			this.meterEngine.createUserMeter(dataBroker, ingressNodeId);
+			
+			NodeConnectorRef egressNodeConnectorRef = rules.get(ingressNodeId).get(dstMac);
+			Uri ingressOutputPort = new Uri(Constants.OPENFLOW_FORWARDING_ACTION_FLOOD);
+			Uri egressOutputPort = new Uri(Constants.OPENFLOW_FORWARDING_ACTION_FLOOD);
+			if(egressNodeConnectorRef!=null){
+				ingressOutputPort = new Uri(CommonUtils.getNodeConnectorRef(ingressNodeConnectorRef));
+				egressOutputPort = new Uri(CommonUtils.getNodeConnectorRef(egressNodeConnectorRef));
+			}
+			
 			if (dstMac.equalsIgnoreCase(Constants.CAPTIVE_PORTAL_MAC)) {
-				programL2Flows(ingressNodeId, srcMac, dstMac, role);
+				programL2Flows(ingressNodeId, ingressOutputPort, egressOutputPort, srcMac, dstMac, role);
 
 			} else if (authenticationEngine.isMacRegistered(srcMac) && authenticationEngine.isMacRegistered(dstMac)) {
-				programL2Flows(ingressNodeId, srcMac, dstMac, role);
+				programL2Flows(ingressNodeId, ingressOutputPort, egressOutputPort, srcMac, dstMac, role);
 			}
 
 			else {
-				// adds the user to the database and the user’s state is unauthenticated
+				// adds the user to the database and the user’s state is
+				// unauthenticated
 				if (!savedMacs.contains(srcMac)) {
 					boolean isSaved = authenticationEngine.saveUnauthUser(srcIP, srcMac);
 					if (isSaved) {
@@ -136,10 +160,8 @@ public class CapFlux implements AutoCloseable, PacketProcessingListener{
 				edgeRuleMacFlags.put(srcMac, false);
 				// add redirection flows
 				if (dstPort == 80 && !edgeRuleMacFlags.get(srcMac)) {
-					this.flowEngine.addReverseflow(this.dataBroker, ingressNodeConnectorId, srcMac, dstMac, srcIP,
-							dstIP, dstPort);
-					this.flowEngine.addforwardflow(this.dataBroker, ingressNodeConnectorId, srcMac, dstMac, srcIP,
-							dstIP, dstPort);
+					this.flowEngine.addReverseflow(this.dataBroker, ingressNodeId, ingressOutputPort, srcMac, dstMac,srcIP, dstIP, dstPort);
+					this.flowEngine.addforwardflow(this.dataBroker, ingressNodeId, egressOutputPort, srcMac, dstMac,srcIP, dstIP, dstPort);
 					edgeRuleMacFlags.put(srcMac, true);
 				}
 			}
@@ -148,9 +170,9 @@ public class CapFlux implements AutoCloseable, PacketProcessingListener{
 		}
 	}
 
-	private void programL2Flows(NodeId ingressNodeId, String srcMac, String dstMac, String role) throws Exception {
-		this.flowEngine.programL2Flow(this.dataBroker, ingressNodeId, srcMac, dstMac, role);
-		this.flowEngine.programL2Flow(this.dataBroker, ingressNodeId, dstMac, srcMac, role);
+	private void programL2Flows(NodeId ingressNodeId, Uri ingressOutputPort, Uri egressOutputPort, String srcMac, String dstMac, String role) throws Exception {
+		this.flowEngine.programL2Flow(this.dataBroker, ingressNodeId, egressOutputPort, srcMac, dstMac, role);
+		this.flowEngine.programL2Flow(this.dataBroker, ingressNodeId, ingressOutputPort, dstMac, srcMac, role);
 	}
 	
 }

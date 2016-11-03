@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.talentica.sdn.odlswitch.impl;
+package com.talentica.sdn.odlofsoftswitch.impl;
 
 import java.util.Collections;
 
@@ -25,7 +25,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.meter.types.rev130918.meter
 import org.opendaylight.yang.gen.v1.urn.opendaylight.meter.types.rev130918.meter.meter.band.headers.meter.band.header.MeterBandTypesBuilder;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 
-import com.talentica.sdn.odlswitch.impl.utils.CommonUtils;
+import com.talentica.sdn.odlofsoftswitch.impl.utils.CommonUtils;
 
 /**
  * @author narenderk

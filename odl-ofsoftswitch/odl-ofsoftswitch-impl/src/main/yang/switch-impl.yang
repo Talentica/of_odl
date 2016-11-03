@@ -1,0 +1,51 @@
+module odl-ofsoftswitch-impl {
+    yang-version 1;
+    namespace "urn:talentica:sdn:odl-ofsoftswitch:odl-ofsoftswitch-impl";
+    prefix "odl-ofsoftswitch-impl";
+
+    import config { prefix config; revision-date 2013-04-05; }
+    import opendaylight-md-sal-binding { prefix mdsal; revision-date 2013-10-28; }
+
+    description
+        "Base YANG definitions for odl-ofsoftswitch-impl.";
+
+    revision "2015-06-05" {
+        description
+            "Initial revision.";
+    }
+
+    identity odl-ofsoftswitch-impl {
+            base config:module-type;
+            config:java-name-prefix CapFlux;
+    }
+  
+    augment "/config:modules/config:module/config:configuration" {
+        case odl-ofsoftswitch-impl {
+            when "/config:modules/config:module/config:type = 'odl-ofsoftswitch-impl'"; 
+            container data-broker {
+                uses config:service-ref {
+                    refine type {
+                        mandatory true;
+                        config:required-identity mdsal:binding-async-data-broker;
+                    }
+                }
+            }      
+            container notification-service {
+                uses config:service-ref {
+                  refine type {
+                    mandatory false;
+                    config:required-identity mdsal:binding-notification-service;
+                  }
+               }
+            }      
+            container rpc-registry {
+                uses config:service-ref {
+                    refine type {
+                        mandatory true;
+                        config:required-identity mdsal:binding-rpc-registry;
+                    }
+                }
+            }      
+        }
+    }
+}

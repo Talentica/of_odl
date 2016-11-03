@@ -1,29 +1,4 @@
-//Creating a simple tree topology
+//Creating a simple tree topology using ovsk
+sudo mn --topo tree,3 --mac --switch ovsk --controller=remote,ip=127.0.0.1 --nat
+//Creating a simple tree topology using ofsoftswitch
 sudo mn --topo tree,3 --mac --switch user --controller=remote,ip=127.0.0.1 --nat
-
-//FLOW STATS
-sudo dpctl unix:/tmp/s1 stats-flow table=0
-sudo ovs-ofctl -O OpenFlow13 dump-flows unix:/tmp/1001
-
-//FLOW TO COTNROLLER
-sudo dpctl unix:/tmp/s1 flow-mod cmd=add,table=0,prio=1 apply:output=ctrl
-
-//ARP
-sudo dpctl unix:/tmp/s1 flow-mod cmd=add,table=0,prio=1 eth_type=0x0806 apply:output=flood
-
-//NORMAL FLOW ADD
-sudo dpctl unix:/tmp/s1 flow-mod cmd=add,table=0,prio=3 in_port=1 apply:output=2
-sudo dpctl unix:/tmp/s1 flow-mod cmd=add,table=0,prio=3 in_port=2 apply:output=1
-sudo dpctl unix:/tmp/1001 flow-mod cmd=add,table=0,prio=3 in_port=2 apply:output={1,3,4}
-sudo dpctl unix:/tmp/1001 flow-mod cmd=add,table=0,prio=3 in_port=3 apply:output={1,2,4}
-sudo dpctl unix:/tmp/1001 flow-mod cmd=add,table=0,prio=3 in_port=1 apply:output={2,3,4}
-sudo dpctl unix:/tmp/1001 flow-mod cmd=add,table=0,prio=3 in_port=4 apply:output={2,3,1}
-
-//ADD METERS
-sudo dpctl unix:/tmp/s1 meter-mod cmd=add,flags=1,meter=1 drop:rate=10000
-
-sudo dpctl unix:/tmp/s1 meter-config
-
-//ADD METER ID IN FLOW
-sudo dpctl unix:/tmp/s1 flow-mod table=0,cmd=add in_port=1 meter:1 apply:output=2
-sudo dpctl unix:/tmp/s1 flow-mod table=0,cmd=add in_port=2 meter:1 apply:output=1

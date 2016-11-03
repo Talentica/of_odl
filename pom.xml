@@ -27,9 +27,11 @@
     <configCodeGeneratorPath>src/main/yang-gen-config</configCodeGeneratorPath>
 
     <switch.version>0.0.1-SNAPSHOT</switch.version>
+    <ofsoftswitch.version>0.0.1-SNAPSHOT</ofsoftswitch.version>
     <karaf-branding.version>1.0.0-SNAPSHOT</karaf-branding.version>
 
     <switch.configfile>49-odl-switch-config.xml</switch.configfile>
+    <ofsoftswitch.configfile>50-odl-ofsoftswitch-config.xml</ofsoftswitch.configfile>
 
     <!-- ODL Controller Dependency Versions -->
     <yang-binding.version>0.8.1-Beryllium-SR1</yang-binding.version>
@@ -216,6 +218,7 @@
 
 	<modules>
       <module>odl-switch</module>
+      <module>odl-ofsoftswitch</module>
       <module>odl-features</module>
       <module>odl-distribution</module>
 	</modules>

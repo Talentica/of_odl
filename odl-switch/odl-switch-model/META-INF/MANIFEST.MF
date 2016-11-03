@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1477648863245
+Bnd-LastModified: 1478178127205
 Build-Jdk: 1.8.0_101
 Built-By: narenderk
 Bundle-DocURL: https://www.opendaylight.org
