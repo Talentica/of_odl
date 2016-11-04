@@ -71,7 +71,7 @@
 				<configuration>
 					<instructions>
 						<Import-Package>*</Import-Package>
-						<Embed-Dependency>utils</Embed-Dependency>
+						<Embed-Dependency>odl-utils</Embed-Dependency>
 					</instructions>
 					<manifestLocation>${project.basedir}/META-INF</manifestLocation>
 				</configuration>
@@ -162,6 +162,11 @@
 			<groupId>org.opendaylight.openflowplugin.model</groupId>
 			<artifactId>model-flow-service</artifactId>
 			<version>${openflowplugin.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.talentica.sdn.common</groupId>
+			<artifactId>odl-utils</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 </project>

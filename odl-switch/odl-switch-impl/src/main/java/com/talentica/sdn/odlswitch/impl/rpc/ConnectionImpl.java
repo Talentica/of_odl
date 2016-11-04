@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.talentica.sdn.odlswitch.impl;
+package com.talentica.sdn.odlswitch.impl.rpc;
 
 import java.util.concurrent.Future;
 
@@ -11,6 +11,8 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.connect.
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.connect.rev150105.ConnectionOutputBuilder;
 import org.opendaylight.yangtools.yang.common.RpcResult;
 import org.opendaylight.yangtools.yang.common.RpcResultBuilder;
+
+import com.talentica.sdn.odlswitch.impl.CapFlux;
 
 /**
  * @author narenderK
