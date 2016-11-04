@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Bnd-LastModified: 1478178131567
+Bnd-LastModified: 1478244506974
 Build-Jdk: 1.8.0_101
 Built-By: narenderk
 Bundle-DocURL: https://www.opendaylight.org
@@ -11,10 +11,17 @@ Bundle-Vendor: OpenDaylight
 Bundle-Version: 0.0.1.SNAPSHOT
 Created-By: Apache Maven Bundle Plugin
 Embed-Dependency: utils
-Export-Package: org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml
- .ns.yang.connect.rev150105;uses:="org.opendaylight.yangtools.concepts,o
- rg.opendaylight.yangtools.yang.binding,org.opendaylight.yangtools.yang.
- common";version="0.0.1.SNAPSHOT"
+Export-Package: com.talentica.sdn.odlofsoftswitch.rpc;uses:="org.openday
+ light.controller.sal.binding.api,org.opendaylight.yang.gen.v1.urn.opend
+ aylight.params.xml.ns.yang.connect.rev150105,org.opendaylight.yangtools
+ .yang.common";version="0.0.1.SNAPSHOT",com.talentica.sdn.odlofsoftswitc
+ h.engine;uses:="org.opendaylight.controller.md.sal.binding.api,org.open
+ daylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100
+ 924,org.opendaylight.yang.gen.v1.urn.opendaylight.inventory.rev130819";
+ version="0.0.1.SNAPSHOT",org.opendaylight.yang.gen.v1.urn.opendaylight.
+ params.xml.ns.yang.connect.rev150105;uses:="org.opendaylight.yangtools.
+ concepts,org.opendaylight.yangtools.yang.binding,org.opendaylight.yangt
+ ools.yang.common";version="0.0.1.SNAPSHOT"
 Import-Package: com.google.common.base;version="[18.0,19)",com.google.co
  mmon.collect;version="[18.0,19)",com.google.common.util.concurrent;vers
  ion="[18.0,19)",javax.management,org.opendaylight.controller.config.api

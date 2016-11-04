@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.talentica.sdn.odlofsoftswitch.impl;
+package com.talentica.sdn.odlofsoftswitch.rpc;
 
 import org.opendaylight.controller.sal.binding.api.BindingAwareBroker.ProviderContext;
 import org.opendaylight.controller.sal.binding.api.BindingAwareBroker.RpcRegistration;
