@@ -23,12 +23,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
-import com.talentica.sdn.odlofsoftswitch.engine.AuthenticationEngine;
-import com.talentica.sdn.odlofsoftswitch.engine.FlowEngine;
-import com.talentica.sdn.odlofsoftswitch.engine.MeterEngine;
-import com.talentica.sdn.odlofsoftswitch.impl.utils.CommonUtils;
-import com.talentica.sdn.odlofsoftswitch.impl.utils.Constants;
-import com.talentica.sdn.odlofsoftswitch.rpc.ConnectionImpl;
+import com.talentica.sdn.odlcommon.odlutils.utils.CommonUtils;
+import com.talentica.sdn.odlcommon.odlutils.utils.Constants;
+import com.talentica.sdn.odlofsoftswitch.impl.engine.AuthenticationEngine;
+import com.talentica.sdn.odlofsoftswitch.impl.engine.FlowEngine;
+import com.talentica.sdn.odlofsoftswitch.impl.engine.MeterEngine;
+import com.talentica.sdn.odlofsoftswitch.impl.rpc.ConnectionImpl;
 
 /**
  * @author narenderK
@@ -87,7 +87,7 @@ public class CapFlux implements AutoCloseable, PacketProcessingListener{
 		log.trace("notification receicved for ", notification.getMatch());
 	    byte[] payload = notification.getPayload();
 		NodeConnectorRef ingressNodeConnectorRef = notification.getIngress();
-		NodeConnectorId ingressNodeConnectorId = CommonUtils.getNodeConnectorRef(ingressNodeConnectorRef);
+		NodeConnectorId ingressNodeConnectorId = com.talentica.sdn.odlcommon.odlutils.utils.CommonUtils.getNodeConnectorRef(ingressNodeConnectorRef);
 		NodeId ingressNodeId = CommonUtils.getNodeId(ingressNodeConnectorId);		
 		byte[] etherTypeRaw = CommonUtils.extractEtherType(notification.getPayload());
 		// Ignore LLDP packets

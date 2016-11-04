@@ -219,7 +219,7 @@
 	</dependencies>
 
 	<modules>
-		<module>odl-utils</module>
+		<module>odl-common</module>
 		<module>odl-switch</module>
 		<module>odl-ofsoftswitch</module>
 		<module>odl-features</module>
