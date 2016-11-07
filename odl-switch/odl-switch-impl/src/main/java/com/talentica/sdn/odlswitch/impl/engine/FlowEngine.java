@@ -79,7 +79,7 @@ public class FlowEngine {
 	 * @param dstPort
 	 * @throws Exception
 	 */
-	public void programL2Flow(DataBroker dataBroker, NodeId nodeId, String srcMac, String dstMac, String role) throws Exception {
+	public static void programL2Flow(DataBroker dataBroker, NodeId nodeId, String srcMac, String dstMac, String role) throws Exception {
 		MatchBuilder matchBuilder = new MatchBuilder();
 		CommonUtils.createEthMatch(matchBuilder, new MacAddress(srcMac), new MacAddress(dstMac), null);
 		
@@ -153,7 +153,7 @@ public class FlowEngine {
 	 * @param dstPort
 	 * @throws Exception
 	 */
-	public void addforwardflow(DataBroker dataBroker, NodeConnectorId ingressNodeConnectorId, String srcMac, String dstMac, String srcIp, String dstIp,
+	public static void addforwardflow(DataBroker dataBroker, NodeConnectorId ingressNodeConnectorId, String srcMac, String dstMac, String srcIp, String dstIp,
 			int dstPort) throws Exception {
 		MatchBuilder matchBuilder2 = new MatchBuilder();
 		CommonUtils.createEthMatch(matchBuilder2, new MacAddress(srcMac), new MacAddress(dstMac), null);
@@ -247,7 +247,7 @@ public class FlowEngine {
 	 * @param dstPort
 	 * @throws Exception
 	 */
-	public void addReverseflow(DataBroker dataBroker, NodeConnectorId ingressNodeConnectorId, String srcMac, String dstMac, String srcIp, String dstIp, int dstPort) throws Exception {
+	public static void addReverseflow(DataBroker dataBroker, NodeConnectorId ingressNodeConnectorId, String srcMac, String dstMac, String srcIp, String dstIp, int dstPort) throws Exception {
 		MatchBuilder matchBuilder1 = new MatchBuilder();
 		CommonUtils.createEthMatch(matchBuilder1, new MacAddress(Constants.CAPTIVE_PORTAL_MAC),new MacAddress(srcMac), null);
 		Ipv4Prefix srcip = new Ipv4Prefix(Constants.CAPTIVE_PORTAL_IP + "/32");
@@ -335,7 +335,7 @@ public class FlowEngine {
 	 * @param nodeId
 	 * @throws Exception
 	 */
-	public void programFloodARPFlow(DataBroker dataBroker, NodeId nodeId) throws Exception {
+	public static void programFloodARPFlow(DataBroker dataBroker, NodeId nodeId) throws Exception {
 		MatchBuilder matchBuilder = new MatchBuilder();
 		CommonUtils.createEthTypeARPMatch(matchBuilder);
 		
