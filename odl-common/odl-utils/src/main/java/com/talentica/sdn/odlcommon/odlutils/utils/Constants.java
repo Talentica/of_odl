@@ -3,6 +3,8 @@
  */
 package com.talentica.sdn.odlcommon.odlutils.utils;
 
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Uri;
+
 /**
  * @author narenderK
  *
@@ -51,5 +53,6 @@ public interface Constants {
     static final String OPENFLOW_NODE_PREFIX = "openflow:";
     static final String OPENFLOW_FORWARDING_ACTION_NORMAL = "NORMAL";
     static final String OPENFLOW_FORWARDING_ACTION_FLOOD = "FLOOD";
+    static final Uri FLOOD_OUTPUT_PORT = new Uri("FLOOD");
 	
 }

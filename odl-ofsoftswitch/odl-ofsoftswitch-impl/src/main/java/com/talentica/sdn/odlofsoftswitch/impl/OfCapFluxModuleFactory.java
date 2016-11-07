@@ -8,6 +8,6 @@
 * Do not modify this file unless it is present under src/main directory
 */
 package com.talentica.sdn.odlofsoftswitch.impl;
-public class CapFluxModuleFactory extends com.talentica.sdn.odlofsoftswitch.impl.AbstractCapFluxModuleFactory {
+public class OfCapFluxModuleFactory extends com.talentica.sdn.odlofsoftswitch.impl.AbstractOfCapFluxModuleFactory {
 
 }

@@ -12,7 +12,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.connect.
 import org.opendaylight.yangtools.yang.common.RpcResult;
 import org.opendaylight.yangtools.yang.common.RpcResultBuilder;
 
-import com.talentica.sdn.odlofsoftswitch.impl.CapFlux;
+import com.talentica.sdn.odlofsoftswitch.impl.OfCapFlux;
 
 /**
  * @author narenderK
@@ -25,7 +25,7 @@ public class ConnectionImpl implements ConnectService{
 		ConnectionOutputBuilder helloBuilder = new ConnectionOutputBuilder();
 		String mac = input.getMac();
 		String ipAddress = input.getIpAddress();
-		String macCompare = CapFlux.getMacToIpMap().get(ipAddress);
+		String macCompare = OfCapFlux.getMacToIpMap().get(ipAddress);
 		if(mac.equals(macCompare)){
 			helloBuilder.setExist("true "+mac+" equals "+macCompare);
 		}else{

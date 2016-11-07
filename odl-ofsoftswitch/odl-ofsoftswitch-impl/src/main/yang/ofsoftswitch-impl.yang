@@ -16,7 +16,7 @@ module odl-ofsoftswitch-impl {
 
     identity odl-ofsoftswitch-impl {
             base config:module-type;
-            config:java-name-prefix CapFlux;
+            config:java-name-prefix OfCapFlux;
     }
   
     augment "/config:modules/config:module/config:configuration" {

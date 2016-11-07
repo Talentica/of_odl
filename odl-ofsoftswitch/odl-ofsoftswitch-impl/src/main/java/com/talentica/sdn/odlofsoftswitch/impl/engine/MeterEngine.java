@@ -35,7 +35,7 @@ import com.talentica.sdn.odlcommon.odlutils.utils.CommonUtils;
  */
 public class MeterEngine {
 	
-	private MeterBuilder meterBuilder = new MeterBuilder();
+	private static MeterBuilder meterBuilder = new MeterBuilder();
 	
 	/**
 	 * 
@@ -43,7 +43,7 @@ public class MeterEngine {
 	 * @param nodeId
 	 * @throws Exception
 	 */
-	public void createGuestMeter(DataBroker dataBroker, NodeId nodeId) throws Exception {
+	public static void createGuestMeter(DataBroker dataBroker, NodeId nodeId) throws Exception {
 		meterBuilder.setMeterId(new MeterId(1L));
 		meterBuilder.setKey(new MeterKey(new MeterId(1L)));
 		meterBuilder.setContainerName("guestMeterContainer");
@@ -78,7 +78,7 @@ public class MeterEngine {
 	 * @param nodeId
 	 * @throws Exception
 	 */
-	public void createUserMeter(DataBroker dataBroker, NodeId nodeId) throws Exception {
+	public static void createUserMeter(DataBroker dataBroker, NodeId nodeId) throws Exception {
 		meterBuilder.setMeterId(new MeterId(2L));
 		meterBuilder.setKey(new MeterKey(new MeterId(2L)));
 		meterBuilder.setContainerName("userMeterContainer");

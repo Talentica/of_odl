@@ -8,7 +8,9 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.talentica.sdn.odlcommon.odlutils.exception.RequestFailedException;
+import com.talentica.sdn.odlcommon.odlutils.to.User;
 import com.talentica.sdn.odlcommon.odlutils.utils.Constants;
 
 /**
@@ -22,7 +24,7 @@ public class AuthenticationEngine {
 	 * @return
 	 * @throws Exception
 	 */
-	public boolean isMacRegistered(String srcMac) throws Exception {
+	public static boolean isMacRegistered(String srcMac) throws Exception {
 		String output = null;
 		boolean exist = false;
 		try {
@@ -46,6 +48,7 @@ public class AuthenticationEngine {
 		return exist;
 	}
 	
+	
 	/**
 	 * 
 	 * @param srcIp
@@ -53,7 +56,7 @@ public class AuthenticationEngine {
 	 * @return
 	 * @throws Exception
 	 */
-	public boolean saveUnauthUser(String srcIp, String srcMac) throws Exception {
+	public static boolean saveUnauthUser(String srcIp, String srcMac) throws Exception {
 		String output = null;
 		boolean isSaved = false;
 		try {
@@ -84,7 +87,7 @@ public class AuthenticationEngine {
 	 * @return
 	 * @throws Exception
 	 */
-	public String getSrcMacRole(String srcMac) throws Exception {
+	public static String getSrcMacRole(String srcMac) throws Exception {
 		String output = null;
 		String role = "";
 		try {
@@ -106,5 +109,38 @@ public class AuthenticationEngine {
 		}
 		return role;
 	}	
+	
+	
+	/**
+	 * 
+	 * @param srcMac
+	 * @return
+	 * @throws Exception
+	 */
+	public static User getUserDetailsFromDB(String srcMac) throws Exception {
+		String output = null;
+		StringBuilder sb = new StringBuilder();
+		User user = null;
+		try {
+			String requestUrl = "http://localhost:9090/getUserDetials" + "?srcMac=" + srcMac;
+			URL url = new URL(requestUrl);
+			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+			conn.setRequestMethod("GET");
+			conn.setRequestProperty(Constants.HTTP_ACCEPT, Constants.HTTP_ACCEPT_TYPE);
+			if (conn.getResponseCode() != 200) {
+				throw new RequestFailedException(conn.getResponseCode());
+			}
+			BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+			while ((output = br.readLine()) != null) {
+				sb.append(output + "\n");
+			}
+			ObjectMapper mapper = new ObjectMapper();
+			user = mapper.readValue(sb.toString(), User.class);
+			conn.disconnect();
+		} catch (Exception e) {
+			throw e;
+		}
+		return user;
+	}
 
 }

@@ -6,13 +6,13 @@ import org.opendaylight.controller.sal.binding.api.RpcProviderRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class CapFluxModule extends com.talentica.sdn.odlofsoftswitch.impl.AbstractCapFluxModule {
+public class OfCapFluxModule extends com.talentica.sdn.odlofsoftswitch.impl.AbstractOfCapFluxModule {
 	private final Logger LOG = LoggerFactory.getLogger(this.getClass());
-	public CapFluxModule(org.opendaylight.controller.config.api.ModuleIdentifier identifier, org.opendaylight.controller.config.api.DependencyResolver dependencyResolver) {
+	public OfCapFluxModule(org.opendaylight.controller.config.api.ModuleIdentifier identifier, org.opendaylight.controller.config.api.DependencyResolver dependencyResolver) {
         super(identifier, dependencyResolver);
     }
 
-    public CapFluxModule(org.opendaylight.controller.config.api.ModuleIdentifier identifier, org.opendaylight.controller.config.api.DependencyResolver dependencyResolver, com.talentica.sdn.odlofsoftswitch.impl.CapFluxModule oldModule, java.lang.AutoCloseable oldInstance) {
+    public OfCapFluxModule(org.opendaylight.controller.config.api.ModuleIdentifier identifier, org.opendaylight.controller.config.api.DependencyResolver dependencyResolver, com.talentica.sdn.odlofsoftswitch.impl.OfCapFluxModule oldModule, java.lang.AutoCloseable oldInstance) {
         super(identifier, dependencyResolver, oldModule, oldInstance);
     }
 
@@ -26,7 +26,7 @@ public class CapFluxModule extends com.talentica.sdn.odlofsoftswitch.impl.Abstra
         DataBroker dataBroker = getDataBrokerDependency();
         RpcProviderRegistry rpcProviderRegistry = getRpcRegistryDependency();
         NotificationProviderService notificationProviderService = getNotificationServiceDependency();
-        CapFlux capFlux = new CapFlux(dataBroker, notificationProviderService, rpcProviderRegistry);
+        OfCapFlux capFlux = new OfCapFlux(dataBroker, notificationProviderService, rpcProviderRegistry);
         LOG.info("L2Forwarding initialized", capFlux);
         return capFlux;
     }

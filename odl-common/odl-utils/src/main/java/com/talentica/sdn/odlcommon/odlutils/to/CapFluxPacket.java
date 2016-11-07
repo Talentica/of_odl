@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.talentica.sdn.odlcommon.odlutils.utils;
+package com.talentica.sdn.odlcommon.odlutils.to;
 
 /**
  * @author narenderk
@@ -13,8 +13,8 @@ public class CapFluxPacket {
 	private String destMacAddress;
 	private String srcIpAddress;
 	private String destIpAddress;
-	private String srcTcpPort;
-	private String destTcpPort;
+	private int srcTcpPort;
+	private int destTcpPort;
 	public String getSrcMacAddress() {
 		return srcMacAddress;
 	}
@@ -39,16 +39,16 @@ public class CapFluxPacket {
 	public void setDestIpAddress(String destIpAddress) {
 		this.destIpAddress = destIpAddress;
 	}
-	public String getSrcTcpPort() {
+	public int getSrcTcpPort() {
 		return srcTcpPort;
 	}
-	public void setSrcTcpPort(String srcTcpPort) {
+	public void setSrcTcpPort(int srcTcpPort) {
 		this.srcTcpPort = srcTcpPort;
 	}
-	public String getDestTcpPort() {
+	public int getDestTcpPort() {
 		return destTcpPort;
 	}
-	public void setDestTcpPort(String destTcpPort) {
+	public void setDestTcpPort(int destTcpPort) {
 		this.destTcpPort = destTcpPort;
 	}
 
