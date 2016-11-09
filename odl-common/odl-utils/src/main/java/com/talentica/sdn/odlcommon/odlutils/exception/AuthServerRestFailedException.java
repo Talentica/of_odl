@@ -10,7 +10,8 @@ public class AuthServerRestFailedException extends Exception {
 	
 	/**
 	 * 
-	 * @param code
+	 * @param msg
+	 * @param cause
 	 */
 	public AuthServerRestFailedException(String msg, Exception cause){  
 		super(msg, cause);  

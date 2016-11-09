@@ -33,7 +33,6 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.action.types.rev131112.acti
 import org.opendaylight.yang.gen.v1.urn.opendaylight.action.types.rev131112.address.address.Ipv4Builder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.flow.inventory.rev130819.FlowCapableNode;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.flow.inventory.rev130819.FlowId;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.flow.types.rev131026.instruction.instruction.meter._case.MeterBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.flow.inventory.rev130819.tables.Table;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.flow.inventory.rev130819.tables.TableKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.flow.inventory.rev130819.tables.table.Flow;
@@ -44,18 +43,16 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.flow.types.rev131026.flow.M
 import org.opendaylight.yang.gen.v1.urn.opendaylight.flow.types.rev131026.instruction.instruction.ApplyActionsCaseBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.flow.types.rev131026.instruction.instruction.MeterCaseBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.flow.types.rev131026.instruction.instruction.apply.actions._case.ApplyActionsBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.flow.types.rev131026.instruction.instruction.meter._case.MeterBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.flow.types.rev131026.instruction.list.Instruction;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.flow.types.rev131026.instruction.list.InstructionBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.flow.types.rev131026.instruction.list.InstructionKey;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.inventory.rev130819.NodeConnectorId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.inventory.rev130819.NodeId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.inventory.rev130819.Nodes;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.inventory.rev130819.nodes.Node;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.inventory.rev130819.nodes.NodeKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.meter.types.rev130918.MeterId;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 import com.talentica.sdn.odlcommon.odlutils.exception.OdlDataStoreException;
@@ -68,8 +65,10 @@ import com.talentica.sdn.odlcommon.odlutils.utils.Constants;
  */
 public class FlowEngine {
 	
-	Logger log = LoggerFactory.getLogger(this.getClass());
-		
+	private FlowEngine(){
+		//utility class, do not instantiate
+	}
+	
 	/**
 	 * 
 	 * @param dataBroker
@@ -135,11 +134,10 @@ public class FlowEngine {
 	 * 
 	 * @param dataBroker
 	 * @param nodeId
+	 * @param outputPort
 	 * @param srcMac
 	 * @param dstMac
-	 * @param ingressNodeConnectorId
 	 * @param role
-	 * @param dstPort
 	 * @throws OdlDataStoreException
 	 */
 	public static void programL2Flow(DataBroker dataBroker, NodeId nodeId, Uri outputPort, String srcMac, String dstMac, String role) throws OdlDataStoreException {
@@ -215,7 +213,8 @@ public class FlowEngine {
 	/**
 	 * 
 	 * @param dataBroker
-	 * @param ingressNodeConnectorId
+	 * @param nodeId
+	 * @param outputPort
 	 * @param srcMac
 	 * @param dstMac
 	 * @param srcIp
@@ -308,7 +307,8 @@ public class FlowEngine {
 	/**
 	 * 
 	 * @param dataBroker
-	 * @param ingressNodeConnectorId
+	 * @param nodeId
+	 * @param outputPort
 	 * @param srcMac
 	 * @param dstMac
 	 * @param srcIp

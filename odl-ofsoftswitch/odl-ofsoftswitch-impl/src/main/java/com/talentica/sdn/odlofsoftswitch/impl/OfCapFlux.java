@@ -1,7 +1,6 @@
 package com.talentica.sdn.odlofsoftswitch.impl;
 
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,8 +23,8 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 import com.talentica.sdn.odlcommon.odlutils.engine.AuthenticationEngine;
-import com.talentica.sdn.odlcommon.odlutils.exception.OdlDataStoreException;
 import com.talentica.sdn.odlcommon.odlutils.exception.AuthServerRestFailedException;
+import com.talentica.sdn.odlcommon.odlutils.exception.OdlDataStoreException;
 import com.talentica.sdn.odlcommon.odlutils.to.CapFluxPacket;
 import com.talentica.sdn.odlcommon.odlutils.to.User;
 import com.talentica.sdn.odlcommon.odlutils.utils.CommonUtils;
@@ -41,7 +40,7 @@ import com.talentica.sdn.odlofsoftswitch.impl.rpc.ConnectionImpl;
  */
 public class OfCapFlux implements AutoCloseable, PacketProcessingListener{
 	
-	private Logger log = LoggerFactory.getLogger(this.getClass());
+	private static final Logger LOG = LoggerFactory.getLogger(OfCapFlux.class);
 	private List<Registration> registrations;
 	private DataBroker dataBroker;
 	private PacketProcessingService packetProcessingService;
@@ -82,7 +81,7 @@ public class OfCapFlux implements AutoCloseable, PacketProcessingListener{
 	
 	@Override
 	public void onPacketReceived(PacketReceived notification) {
-		log.trace("notification receicved for ", notification.getMatch());
+		LOG.trace("notification receicved for ", notification.getMatch());
 	    byte[] payload = notification.getPayload();
 		NodeConnectorRef ingressNodeConnectorRef = notification.getIngress();
 		NodeConnectorId ingressNodeConnectorId = com.talentica.sdn.odlcommon.odlutils.utils.CommonUtils.getNodeConnectorRef(ingressNodeConnectorRef);
@@ -163,11 +162,11 @@ public class OfCapFlux implements AutoCloseable, PacketProcessingListener{
 				}
 			}
 		}catch(OdlDataStoreException e){
-			log.error("Exception occured while Odl data store update:: ", e);
+			LOG.error("Exception occured while Odl data store update:: ", e);
 		} catch (AuthServerRestFailedException e) {
-			log.error("Exception occured while rest call to auth server:: ", e);
+			LOG.error("Exception occured while rest call to auth server:: ", e);
 		} catch (Exception e) {
-			log.error("Exception occured:: ", e);
+			LOG.error("Exception occured:: ", e);
 		}
 	}
 

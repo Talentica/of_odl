@@ -12,7 +12,8 @@ public class OdlDataStoreException extends Exception {
 
 	/**
 	 * 
-	 * @param code
+	 * @param msg
+	 * @param cause
 	 */
 	public OdlDataStoreException(String msg, Exception cause) {
 		super(msg, cause);

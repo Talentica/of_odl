@@ -19,37 +19,11 @@ import com.talentica.sdn.odlcommon.odlutils.utils.Constants;
  *
  */
 public class AuthenticationEngine {
-	/**
-	 * 
-	 * @param srcMac
-	 * @return
-	 * @throws AuthServerRestFailedException
-	 */
-	public static boolean isMacRegistered(String srcMac) throws AuthServerRestFailedException{
-		String output = null;
-		boolean exist = false;
-		try {
-			URL url = new URL("http://localhost:9090/active" + "?srcMac=" + srcMac);
-			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-			conn.setRequestMethod("GET");
-			conn.setRequestProperty(Constants.HTTP_ACCEPT, Constants.HTTP_ACCEPT_TYPE);
-			if (conn.getResponseCode() != 200) {
-				throw new RequestFailedException(conn.getResponseCode());
-			}
-			BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-			while ((output = br.readLine()) != null) {
-				if (output.contains(srcMac)) {
-					exist = true;
-				}
-			}
-			conn.disconnect();
-		} catch (Exception e) {
-			throw new AuthServerRestFailedException("Unable to find mac registered", e);
-		} 
-		return exist;
+	
+	private AuthenticationEngine(){
+		//utility class, do not instantiate
 	}
-	
-	
+		
 	/**
 	 * 
 	 * @param srcIp
@@ -82,35 +56,7 @@ public class AuthenticationEngine {
 		return isSaved;
 	}
 	
-	/**
-	 * 
-	 * @param srcMac
-	 * @return
-	 * @throws AuthServerRestFailedException
-	 */
-	public static String getSrcMacRole(String srcMac) throws AuthServerRestFailedException{
-		String output = null;
-		String role = "";
-		try {
-			String requestUrl = "http://localhost:9090/getRole" + "?srcMac=" + srcMac;
-			URL url = new URL(requestUrl);
-			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-			conn.setRequestMethod("GET");
-			conn.setRequestProperty(Constants.HTTP_ACCEPT, Constants.HTTP_ACCEPT_TYPE);
-			if (conn.getResponseCode() != 200) {
-				throw new RequestFailedException(conn.getResponseCode());
-			}
-			BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-			while ((output = br.readLine()) != null) {
-					role = output;
-			}
-			conn.disconnect();
-		} catch (Exception e) {
-			throw new AuthServerRestFailedException("Unable to get user role", e);
-		}
-		return role;
-	}	
-	
+		
 	/**
 	 * 
 	 * @param srcMac

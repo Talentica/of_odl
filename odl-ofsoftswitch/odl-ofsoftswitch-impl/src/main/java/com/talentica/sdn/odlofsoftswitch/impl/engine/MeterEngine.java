@@ -38,6 +38,10 @@ public class MeterEngine {
 	
 	private static MeterBuilder meterBuilder = new MeterBuilder();
 	
+	private MeterEngine(){
+		//utility class, do not instantiate
+	}
+	
 	/**
 	 * 
 	 * @param dataBroker

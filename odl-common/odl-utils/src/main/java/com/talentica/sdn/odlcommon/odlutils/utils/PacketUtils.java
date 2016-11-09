@@ -12,6 +12,15 @@ import com.talentica.sdn.odlcommon.odlutils.to.User;
  */
 public class PacketUtils {
 	
+	private PacketUtils(){
+		//utility class, do not instantiate
+	}
+	
+	/**
+	 * 
+	 * @param payload
+	 * @return
+	 */
 	public static CapFluxPacket parsePacketFromPayload(byte[] payload){
 		CapFluxPacket packet = new CapFluxPacket();
 		// Parse packet
@@ -33,20 +42,24 @@ public class PacketUtils {
 		return packet;
 	}
 	
+	/**
+	 * 
+	 * @param dstMac
+	 * @return
+	 */
 	public static boolean isDestCaptivePortal(String dstMac){
-		if(dstMac.equalsIgnoreCase(Constants.CAPTIVE_PORTAL_MAC)){
-			return true;
-		}
-		return false;
+		return dstMac.equalsIgnoreCase(Constants.CAPTIVE_PORTAL_MAC);
+			
 	}
-
+	
+	/**
+	 * 
+	 * @param srcUser
+	 * @param dstUser
+	 * @return
+	 */
 	public static boolean isSrcDstActivated(User srcUser, User dstUser) {
-		if(srcUser.isExist() && dstUser.isExist()){
-			if(srcUser.isActivated() && dstUser.isActivated()){
-				return true;
-			}
-		}
-		return false;
+		return srcUser.isExist() && dstUser.isExist() && srcUser.isActivated() && dstUser.isActivated();
 	}
 
 

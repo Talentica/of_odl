@@ -6,12 +6,28 @@ import org.opendaylight.controller.sal.binding.api.RpcProviderRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @author narenderk
+ */
 public class CapFluxModule extends com.talentica.sdn.odlswitch.impl.AbstractCapFluxModule {
-	private final Logger LOG = LoggerFactory.getLogger(this.getClass());
+	private static final Logger LOG = LoggerFactory.getLogger(CapFluxModule.class);
+	
+	/**
+	 * 
+	 * @param identifier
+	 * @param dependencyResolver
+	 */
 	public CapFluxModule(org.opendaylight.controller.config.api.ModuleIdentifier identifier, org.opendaylight.controller.config.api.DependencyResolver dependencyResolver) {
         super(identifier, dependencyResolver);
     }
-
+	
+	/**
+	 * 
+	 * @param identifier
+	 * @param dependencyResolver
+	 * @param oldModule
+	 * @param oldInstance
+	 */
     public CapFluxModule(org.opendaylight.controller.config.api.ModuleIdentifier identifier, org.opendaylight.controller.config.api.DependencyResolver dependencyResolver, com.talentica.sdn.odlswitch.impl.CapFluxModule oldModule, java.lang.AutoCloseable oldInstance) {
         super(identifier, dependencyResolver, oldModule, oldInstance);
     }

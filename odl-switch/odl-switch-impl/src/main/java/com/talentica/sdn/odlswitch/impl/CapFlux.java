@@ -1,7 +1,6 @@
 package com.talentica.sdn.odlswitch.impl;
 
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,7 +27,6 @@ import com.talentica.sdn.odlcommon.odlutils.exception.OdlDataStoreException;
 import com.talentica.sdn.odlcommon.odlutils.to.CapFluxPacket;
 import com.talentica.sdn.odlcommon.odlutils.to.User;
 import com.talentica.sdn.odlcommon.odlutils.utils.CommonUtils;
-import com.talentica.sdn.odlcommon.odlutils.utils.Constants;
 import com.talentica.sdn.odlcommon.odlutils.utils.PacketUtils;
 import com.talentica.sdn.odlswitch.impl.engine.FlowEngine;
 import com.talentica.sdn.odlswitch.impl.rpc.ConnectionImpl;
@@ -39,7 +37,7 @@ import com.talentica.sdn.odlswitch.impl.rpc.ConnectionImpl;
  */
 public class CapFlux implements AutoCloseable, PacketProcessingListener{
 	
-	private Logger log = LoggerFactory.getLogger(this.getClass());
+	private static final Logger LOG = LoggerFactory.getLogger(CapFlux.class);
 	private List<Registration> registrations;
 	private DataBroker dataBroker;
 	private PacketProcessingService packetProcessingService;
@@ -79,7 +77,7 @@ public class CapFlux implements AutoCloseable, PacketProcessingListener{
 	
 	@Override
 	public void onPacketReceived(PacketReceived notification) {
-		log.trace("notification receicved for ", notification.getMatch());
+		LOG.trace("notification receicved for ", notification.getMatch());
 	    byte[] payload = notification.getPayload();
 		NodeConnectorRef ingressNodeConnectorRef = notification.getIngress();
 		NodeConnectorId ingressNodeConnectorId = CommonUtils.getNodeConnectorRef(ingressNodeConnectorRef);
@@ -139,11 +137,11 @@ public class CapFlux implements AutoCloseable, PacketProcessingListener{
 				}
 			}
 		}catch(OdlDataStoreException e){
-			log.error("Exception occured while Odl data store update:: ", e);
+			LOG.error("Exception occured while Odl data store update:: ", e);
 		} catch (AuthServerRestFailedException e) {
-			log.error("Exception occured while rest call to auth server:: ", e);
+			LOG.error("Exception occured while rest call to auth server:: ", e);
 		} catch (Exception e) {
-			log.error("Exception occured:: ", e);
+			LOG.error("Exception occured:: ", e);
 		}
 	}
 
