@@ -9,6 +9,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.talentica.sdn.odlcommon.odlutils.exception.AuthServerRestFailedException;
 import com.talentica.sdn.odlcommon.odlutils.exception.RequestFailedException;
 import com.talentica.sdn.odlcommon.odlutils.to.User;
 import com.talentica.sdn.odlcommon.odlutils.utils.Constants;
@@ -22,9 +23,9 @@ public class AuthenticationEngine {
 	 * 
 	 * @param srcMac
 	 * @return
-	 * @throws Exception
+	 * @throws AuthServerRestFailedException
 	 */
-	public static boolean isMacRegistered(String srcMac) throws Exception {
+	public static boolean isMacRegistered(String srcMac) throws AuthServerRestFailedException{
 		String output = null;
 		boolean exist = false;
 		try {
@@ -43,7 +44,7 @@ public class AuthenticationEngine {
 			}
 			conn.disconnect();
 		} catch (Exception e) {
-			throw e;
+			throw new AuthServerRestFailedException("Unable to find mac registered", e);
 		} 
 		return exist;
 	}
@@ -54,9 +55,9 @@ public class AuthenticationEngine {
 	 * @param srcIp
 	 * @param srcMac
 	 * @return
-	 * @throws Exception
+	 * @throws AuthServerRestFailedException
 	 */
-	public static boolean saveUnauthUser(String srcIp, String srcMac) throws Exception {
+	public static boolean saveUnauthUser(String srcIp, String srcMac) throws AuthServerRestFailedException {
 		String output = null;
 		boolean isSaved = false;
 		try {
@@ -76,7 +77,7 @@ public class AuthenticationEngine {
 			}
 			conn.disconnect();
 		} catch (Exception e) {
-			throw e;
+			throw new AuthServerRestFailedException("Unable to save unauth user", e);
 		} 
 		return isSaved;
 	}
@@ -85,9 +86,9 @@ public class AuthenticationEngine {
 	 * 
 	 * @param srcMac
 	 * @return
-	 * @throws Exception
+	 * @throws AuthServerRestFailedException
 	 */
-	public static String getSrcMacRole(String srcMac) throws Exception {
+	public static String getSrcMacRole(String srcMac) throws AuthServerRestFailedException{
 		String output = null;
 		String role = "";
 		try {
@@ -105,19 +106,18 @@ public class AuthenticationEngine {
 			}
 			conn.disconnect();
 		} catch (Exception e) {
-			throw e;
+			throw new AuthServerRestFailedException("Unable to get user role", e);
 		}
 		return role;
 	}	
-	
 	
 	/**
 	 * 
 	 * @param srcMac
 	 * @return
-	 * @throws Exception
+	 * @throws AuthServerRestFailedException
 	 */
-	public static User getUserDetailsFromDB(String srcMac) throws Exception {
+	public static User getUserDetailsFromDB(String srcMac) throws AuthServerRestFailedException {
 		String output = null;
 		StringBuilder sb = new StringBuilder();
 		User user = null;
@@ -138,7 +138,7 @@ public class AuthenticationEngine {
 			user = mapper.readValue(sb.toString(), User.class);
 			conn.disconnect();
 		} catch (Exception e) {
-			throw e;
+			throw new AuthServerRestFailedException("Unable to get user detail", e);
 		}
 		return user;
 	}

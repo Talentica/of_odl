@@ -25,6 +25,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.meter.types.rev130918.meter
 import org.opendaylight.yang.gen.v1.urn.opendaylight.meter.types.rev130918.meter.meter.band.headers.meter.band.header.MeterBandTypesBuilder;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 
+import com.talentica.sdn.odlcommon.odlutils.exception.OdlDataStoreException;
 import com.talentica.sdn.odlcommon.odlutils.utils.CommonUtils;
 
 
@@ -41,9 +42,9 @@ public class MeterEngine {
 	 * 
 	 * @param dataBroker
 	 * @param nodeId
-	 * @throws Exception
+	 * @throws OdlDataStoreException
 	 */
-	public static void createGuestMeter(DataBroker dataBroker, NodeId nodeId) throws Exception {
+	public static void createGuestMeter(DataBroker dataBroker, NodeId nodeId) throws OdlDataStoreException {
 		meterBuilder.setMeterId(new MeterId(1L));
 		meterBuilder.setKey(new MeterKey(new MeterId(1L)));
 		meterBuilder.setContainerName("guestMeterContainer");
@@ -76,9 +77,9 @@ public class MeterEngine {
 	 * 
 	 * @param dataBroker
 	 * @param nodeId
-	 * @throws Exception
+	 * @throws OdlDataStoreException
 	 */
-	public static void createUserMeter(DataBroker dataBroker, NodeId nodeId) throws Exception {
+	public static void createUserMeter(DataBroker dataBroker, NodeId nodeId) throws OdlDataStoreException {
 		meterBuilder.setMeterId(new MeterId(2L));
 		meterBuilder.setKey(new MeterKey(new MeterId(2L)));
 		meterBuilder.setContainerName("userMeterContainer");

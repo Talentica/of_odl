@@ -37,6 +37,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 import com.google.common.util.concurrent.CheckedFuture;
+import com.talentica.sdn.odlcommon.odlutils.exception.OdlDataStoreException;
 
 /**
  * @author narenderK
@@ -272,10 +273,10 @@ public class CommonUtils {
 	 * @param dataObject
 	 * @param isAdd
 	 * @return
-	 * @throws Exception
+	 * @throws OdlDataStoreException
 	 */
 	public static <T extends DataObject> boolean writeData(DataBroker dataBroker, LogicalDatastoreType logicalDatastoreType, 
-    		InstanceIdentifier<T> iid, T dataObject, boolean isAdd) throws Exception {
+    		InstanceIdentifier<T> iid, T dataObject, boolean isAdd) throws OdlDataStoreException {
 		Preconditions.checkNotNull(dataBroker);
 		WriteTransaction modification = dataBroker.newWriteOnlyTransaction();
 		if (isAdd) {
@@ -292,7 +293,7 @@ public class CommonUtils {
 			return true;
 		} catch (Exception e) {
 			modification.cancel();
-			throw e;
+			throw new OdlDataStoreException("Failed to push flow in config Datastore",e);
 		}
 	}
 	

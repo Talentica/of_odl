@@ -23,6 +23,8 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 import com.talentica.sdn.odlcommon.odlutils.engine.AuthenticationEngine;
+import com.talentica.sdn.odlcommon.odlutils.exception.AuthServerRestFailedException;
+import com.talentica.sdn.odlcommon.odlutils.exception.OdlDataStoreException;
 import com.talentica.sdn.odlcommon.odlutils.to.CapFluxPacket;
 import com.talentica.sdn.odlcommon.odlutils.to.User;
 import com.talentica.sdn.odlcommon.odlutils.utils.CommonUtils;
@@ -136,12 +138,16 @@ public class CapFlux implements AutoCloseable, PacketProcessingListener{
 					edgeRuleMacFlags.put(srcMac, true);
 				}
 			}
-		}catch(Exception e){
+		}catch(OdlDataStoreException e){
+			log.error("Exception occured while Odl data store update:: ", e);
+		} catch (AuthServerRestFailedException e) {
+			log.error("Exception occured while rest call to auth server:: ", e);
+		} catch (Exception e) {
 			log.error("Exception occured:: ", e);
 		}
 	}
 
-	private void programL2Flows(NodeId ingressNodeId, User srcUser, User dstUser) throws Exception {
+	private void programL2Flows(NodeId ingressNodeId, User srcUser, User dstUser) throws OdlDataStoreException  {
 		FlowEngine.programL2Flow(this.dataBroker, ingressNodeId, srcUser.getMacAddress(), dstUser.getMacAddress(), srcUser.getUserRole());
 		FlowEngine.programL2Flow(this.dataBroker, ingressNodeId, dstUser.getMacAddress(), srcUser.getMacAddress(), dstUser.getUserRole());
 	}

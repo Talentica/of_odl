@@ -57,6 +57,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
+import com.talentica.sdn.odlcommon.odlutils.exception.OdlDataStoreException;
 import com.talentica.sdn.odlcommon.odlutils.utils.CommonUtils;
 import com.talentica.sdn.odlcommon.odlutils.utils.Constants;
 
@@ -77,9 +78,9 @@ public class FlowEngine {
 	 * @param ingressNodeConnectorId
 	 * @param role
 	 * @param dstPort
-	 * @throws Exception
+	 * @throws OdlDataStoreException
 	 */
-	public static void programL2Flow(DataBroker dataBroker, NodeId nodeId, String srcMac, String dstMac, String role) throws Exception {
+	public static void programL2Flow(DataBroker dataBroker, NodeId nodeId, String srcMac, String dstMac, String role) throws OdlDataStoreException {
 		MatchBuilder matchBuilder = new MatchBuilder();
 		CommonUtils.createEthMatch(matchBuilder, new MacAddress(srcMac), new MacAddress(dstMac), null);
 		
@@ -151,10 +152,10 @@ public class FlowEngine {
 	 * @param srcIp
 	 * @param dstIp
 	 * @param dstPort
-	 * @throws Exception
+	 * @throws OdlDataStoreException
 	 */
 	public static void addforwardflow(DataBroker dataBroker, NodeConnectorId ingressNodeConnectorId, String srcMac, String dstMac, String srcIp, String dstIp,
-			int dstPort) throws Exception {
+			int dstPort) throws OdlDataStoreException {
 		MatchBuilder matchBuilder2 = new MatchBuilder();
 		CommonUtils.createEthMatch(matchBuilder2, new MacAddress(srcMac), new MacAddress(dstMac), null);
 		Ipv4Prefix srcip = new Ipv4Prefix(srcIp + "/32");
@@ -245,9 +246,9 @@ public class FlowEngine {
 	 * @param srcIp
 	 * @param dstIp
 	 * @param dstPort
-	 * @throws Exception
+	 * @throws OdlDataStoreException
 	 */
-	public static void addReverseflow(DataBroker dataBroker, NodeConnectorId ingressNodeConnectorId, String srcMac, String dstMac, String srcIp, String dstIp, int dstPort) throws Exception {
+	public static void addReverseflow(DataBroker dataBroker, NodeConnectorId ingressNodeConnectorId, String srcMac, String dstMac, String srcIp, String dstIp, int dstPort) throws OdlDataStoreException {
 		MatchBuilder matchBuilder1 = new MatchBuilder();
 		CommonUtils.createEthMatch(matchBuilder1, new MacAddress(Constants.CAPTIVE_PORTAL_MAC),new MacAddress(srcMac), null);
 		Ipv4Prefix srcip = new Ipv4Prefix(Constants.CAPTIVE_PORTAL_IP + "/32");
@@ -333,9 +334,9 @@ public class FlowEngine {
 	 * 
 	 * @param dataBroker
 	 * @param nodeId
-	 * @throws Exception
+	 * @throws OdlDataStoreException
 	 */
-	public static void programFloodARPFlow(DataBroker dataBroker, NodeId nodeId) throws Exception {
+	public static void programFloodARPFlow(DataBroker dataBroker, NodeId nodeId) throws OdlDataStoreException {
 		MatchBuilder matchBuilder = new MatchBuilder();
 		CommonUtils.createEthTypeARPMatch(matchBuilder);
 		

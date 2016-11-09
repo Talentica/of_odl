@@ -24,6 +24,8 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 import com.talentica.sdn.odlcommon.odlutils.engine.AuthenticationEngine;
+import com.talentica.sdn.odlcommon.odlutils.exception.OdlDataStoreException;
+import com.talentica.sdn.odlcommon.odlutils.exception.AuthServerRestFailedException;
 import com.talentica.sdn.odlcommon.odlutils.to.CapFluxPacket;
 import com.talentica.sdn.odlcommon.odlutils.to.User;
 import com.talentica.sdn.odlcommon.odlutils.utils.CommonUtils;
@@ -160,17 +162,21 @@ public class OfCapFlux implements AutoCloseable, PacketProcessingListener{
 					edgeRuleMacFlags.put(srcMac, true);
 				}
 			}
-		}catch(Exception e){
+		}catch(OdlDataStoreException e){
+			log.error("Exception occured while Odl data store update:: ", e);
+		} catch (AuthServerRestFailedException e) {
+			log.error("Exception occured while rest call to auth server:: ", e);
+		} catch (Exception e) {
 			log.error("Exception occured:: ", e);
 		}
 	}
 
-	private void programL2Flows(NodeId ingressNodeId, Uri ingressOutputPort, Uri egressOutputPort, User srcUser, User dstUser) throws Exception {
+	private void programL2Flows(NodeId ingressNodeId, Uri ingressOutputPort, Uri egressOutputPort, User srcUser, User dstUser) throws OdlDataStoreException {
 		FlowEngine.programL2Flow(this.dataBroker, ingressNodeId, egressOutputPort, srcUser.getMacAddress(), dstUser.getMacAddress(), srcUser.getUserRole());
-		FlowEngine.programL2Flow(this.dataBroker, ingressNodeId, ingressOutputPort, dstUser.getMacAddress(), srcUser.getMacAddress(), dstUser.getUserRole());
+		FlowEngine.programL2Flow(this.dataBroker, ingressNodeId, ingressOutputPort, dstUser.getMacAddress(), srcUser.getMacAddress(), srcUser.getUserRole());
 	}
 	
-	private void programMeters(NodeId ingressNodeId) throws Exception {
+	private void programMeters(NodeId ingressNodeId) throws OdlDataStoreException {
 		MeterEngine.createGuestMeter(this.dataBroker, ingressNodeId);
 		MeterEngine.createUserMeter(this.dataBroker, ingressNodeId);
 	}
