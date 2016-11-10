@@ -60,6 +60,7 @@ import com.google.common.collect.Lists;
 import com.talentica.sdn.odlcommon.odlutils.exception.OdlDataStoreException;
 import com.talentica.sdn.odlcommon.odlutils.utils.CommonUtils;
 import com.talentica.sdn.odlcommon.odlutils.utils.Constants;
+import com.talentica.sdn.odlcommon.odlutils.utils.FlowUtils;
 
 /**
  * * @author narenderK
@@ -121,18 +122,8 @@ public class FlowEngine {
 
 		// Create Flow
 		FlowBuilder flowBuilder = new FlowBuilder();
-		flowBuilder.setMatch(matchBuilder.build());
-
 		String flowId = "L2_Rule_" + srcMac +"_to_" +dstMac;
-		flowBuilder.setId(new FlowId(flowId));
-		FlowKey key = new FlowKey(new FlowId(flowId));
-		flowBuilder.setBarrier(true);
-		flowBuilder.setTableId((short) 0);
-		flowBuilder.setKey(key);
-		flowBuilder.setPriority(12);
-		flowBuilder.setFlowName(flowId);
-		flowBuilder.setHardTimeout(0);
-		flowBuilder.setIdleTimeout(0);
+		FlowUtils.createFlowBuilder(flowBuilder, matchBuilder,flowId, 12);
 		flowBuilder.setInstructions(isb.setInstruction(instructions).build());
 
 		InstanceIdentifier<Flow> flowIID = InstanceIdentifier.builder(Nodes.class)
@@ -156,12 +147,12 @@ public class FlowEngine {
 	 */
 	public static void addforwardflow(DataBroker dataBroker, NodeConnectorId ingressNodeConnectorId, String srcMac, String dstMac, String srcIp, String dstIp,
 			int dstPort) throws OdlDataStoreException {
-		MatchBuilder matchBuilder2 = new MatchBuilder();
-		CommonUtils.createEthMatch(matchBuilder2, new MacAddress(srcMac), new MacAddress(dstMac), null);
+		MatchBuilder matchBuilder = new MatchBuilder();
+		CommonUtils.createEthMatch(matchBuilder, new MacAddress(srcMac), new MacAddress(dstMac), null);
 		Ipv4Prefix srcip = new Ipv4Prefix(srcIp + "/32");
 		Ipv4Prefix dstip = new Ipv4Prefix(dstIp + "/32");
-		CommonUtils.createL3IPv4Match(matchBuilder2, srcip, dstip);
-		CommonUtils.createSetTcpDstMatch(matchBuilder2, new PortNumber(dstPort));
+		CommonUtils.createL3IPv4Match(matchBuilder, srcip, dstip);
+		CommonUtils.createSetTcpDstMatch(matchBuilder, new PortNumber(dstPort));
 		List<Action> actionList = new ArrayList<>();
 		
 		// Set output action
@@ -215,19 +206,8 @@ public class FlowEngine {
 
 		// Create Flow
 		FlowBuilder flowBuilder = new FlowBuilder();
-		flowBuilder.setMatch(matchBuilder2.build());
-
 		String flowId = "ForwardFlow_"+srcMac;
-		
-		flowBuilder.setId(new FlowId(flowId));
-		FlowKey key = new FlowKey(new FlowId(flowId));
-		flowBuilder.setBarrier(true);
-		flowBuilder.setTableId((short) 0);
-		flowBuilder.setKey(key);
-		flowBuilder.setPriority(13);
-		flowBuilder.setFlowName(flowId);
-		flowBuilder.setHardTimeout(0);
-		flowBuilder.setIdleTimeout(0);
+		FlowUtils.createFlowBuilder(flowBuilder, matchBuilder,flowId, 13);
 		flowBuilder.setInstructions(isb.setInstruction(instructions).build());
 
 		InstanceIdentifier<Flow> flowIID = InstanceIdentifier.builder(Nodes.class)
@@ -249,12 +229,12 @@ public class FlowEngine {
 	 * @throws OdlDataStoreException
 	 */
 	public static void addReverseflow(DataBroker dataBroker, NodeConnectorId ingressNodeConnectorId, String srcMac, String dstMac, String srcIp, String dstIp, int dstPort) throws OdlDataStoreException {
-		MatchBuilder matchBuilder1 = new MatchBuilder();
-		CommonUtils.createEthMatch(matchBuilder1, new MacAddress(Constants.CAPTIVE_PORTAL_MAC),new MacAddress(srcMac), null);
+		MatchBuilder matchBuilder = new MatchBuilder();
+		CommonUtils.createEthMatch(matchBuilder, new MacAddress(Constants.CAPTIVE_PORTAL_MAC),new MacAddress(srcMac), null);
 		Ipv4Prefix srcip = new Ipv4Prefix(Constants.CAPTIVE_PORTAL_IP + "/32");
 		Ipv4Prefix dstip = new Ipv4Prefix(srcIp + "/32");
-		CommonUtils.createL3IPv4Match(matchBuilder1, srcip, dstip);
-		CommonUtils.createSetTcpSrcMatch(matchBuilder1, new PortNumber(Constants.CAPTIVE_PORTAL_SERVER_PORT));
+		CommonUtils.createL3IPv4Match(matchBuilder, srcip, dstip);
+		CommonUtils.createSetTcpSrcMatch(matchBuilder, new PortNumber(Constants.CAPTIVE_PORTAL_SERVER_PORT));
 		List<Action> actionList1 = new ArrayList<>();
 		
 		// Set output action
@@ -308,19 +288,8 @@ public class FlowEngine {
 
 		// Create Flow
 		FlowBuilder flowBuilder = new FlowBuilder();
-		flowBuilder.setMatch(matchBuilder1.build());
-
 		String flowId = "ReverseFlow_"+srcMac;
-
-		flowBuilder.setId(new FlowId(flowId));
-		FlowKey key = new FlowKey(new FlowId(flowId));
-		flowBuilder.setBarrier(true);
-		flowBuilder.setTableId((short) 0);
-		flowBuilder.setKey(key);
-		flowBuilder.setPriority(13);
-		flowBuilder.setFlowName(flowId);
-		flowBuilder.setHardTimeout(0);
-		flowBuilder.setIdleTimeout(0);
+		FlowUtils.createFlowBuilder(flowBuilder, matchBuilder,flowId,13);
 		flowBuilder.setInstructions(isb.setInstruction(instructions).build());
 
 		InstanceIdentifier<Flow> flowIID = InstanceIdentifier.builder(Nodes.class)
@@ -367,19 +336,8 @@ public class FlowEngine {
 
 		// Create Flow
 		FlowBuilder flowBuilder = new FlowBuilder();
-		flowBuilder.setMatch(matchBuilder.build());
-
 		String flowId = "FLOOD_ARP_" + nodeId.getValue();
-		flowBuilder.setId(new FlowId(flowId));
-		FlowKey key = new FlowKey(new FlowId(flowId));
-		flowBuilder.setBarrier(true);
-		flowBuilder.setTableId((short) 0);
-		flowBuilder.setKey(key);
-		flowBuilder.setPriority(2);
-		flowBuilder.setFlowName(flowId);
-		flowBuilder.setHardTimeout(0);
-		flowBuilder.setIdleTimeout(0);
-		
+		FlowUtils.createFlowBuilder(flowBuilder, matchBuilder,flowId,2);		
 		flowBuilder.setInstructions(isb.setInstruction(instructions).build());
 
 		InstanceIdentifier<Flow> flowIID = InstanceIdentifier.builder(Nodes.class)
