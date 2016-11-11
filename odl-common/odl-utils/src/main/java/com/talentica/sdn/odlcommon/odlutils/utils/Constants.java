@@ -11,10 +11,6 @@ import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.
  */
 public interface Constants {
 	
-	static final String CAPTIVE_PORTAL_MAC = "00:00:00:00:00:09";
-	static final String CAPTIVE_PORTAL_IP = "172.29.3.3";
-	static final Integer CAPTIVE_PORTAL_SERVER_PORT = 9090;
-	
 	static final int ETHER_TYPE_START_POSITION = 12;
 	static final int ETHER_TYPE_END_POSITION = 14;
 	static final int DST_MAC_START_POSITION = 0;
@@ -43,16 +39,31 @@ public interface Constants {
     static final long LLDP_LONG = (long) 0x88CC;
     static final long ARP_LONG = (long) 0x0806;
     
-    static final String ROLE_GUEST = "GUEST";
-    static final String ROLE_EMPLOYEE = "USER";
-    static final String ROLE_ALL = "ALL";
+    static final String OPENFLOW_NODE_PREFIX = "openflow:";
+    static final Uri OPENFLOW_OUTPUT_PORT_NORMAL = new Uri("NORMAL");
+    static final Uri OPENFLOW_OUTPUT_PORT_FLOOD = new Uri("FLOOD");
     
     static final String HTTP_ACCEPT = "Accept";
     static final String HTTP_ACCEPT_TYPE = "application/json";
     
-    static final String OPENFLOW_NODE_PREFIX = "openflow:";
-    static final String OPENFLOW_FORWARDING_ACTION_NORMAL = "NORMAL";
-    static final String OPENFLOW_FORWARDING_ACTION_FLOOD = "FLOOD";
-    static final Uri FLOOD_OUTPUT_PORT = new Uri("FLOOD");
-	
+    static final String CAPTIVE_PORTAL_MAC = "00:00:00:00:00:09";
+	static final String CAPTIVE_PORTAL_IP = "172.29.3.3";
+	static final Integer CAPTIVE_PORTAL_SERVER_PORT = 9090;
+    
+    static final String ROLE_GUEST = "GUEST";
+    static final String ROLE_EMPLOYEE = "USER";
+    
+    static final int ORDER_ARP_FLOOD = 2;
+    static final int ORDER_FORWARDING_RULE = 13;
+    static final int ORDER_L2_RULE = 12;
+    
+    static final long BAND_RATE_KB = 50000L;
+    static final long DROP_RATE_KB_GUEST = 500L;
+    static final long DROP_RATE_KB_EMPLOYEE = 10000L;
+    
+    static final long QUEUE_ID_GUEST = 2L;
+    static final long QUEUE_ID_EMPLOYEE = 1L;
+    static final long METER_ID_GUEST = 2L;
+    static final long METER_ID_EMPLOYEE = 1L;
+    	
 }

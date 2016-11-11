@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 import com.talentica.sdn.odlcommon.odlutils.engine.AuthenticationEngine;
+import com.talentica.sdn.odlcommon.odlutils.engine.FlowEngine;
 import com.talentica.sdn.odlcommon.odlutils.exception.AuthServerRestFailedException;
 import com.talentica.sdn.odlcommon.odlutils.exception.OdlDataStoreException;
 import com.talentica.sdn.odlcommon.odlutils.to.CapFluxPacket;
@@ -30,7 +31,7 @@ import com.talentica.sdn.odlcommon.odlutils.to.User;
 import com.talentica.sdn.odlcommon.odlutils.utils.CommonUtils;
 import com.talentica.sdn.odlcommon.odlutils.utils.Constants;
 import com.talentica.sdn.odlcommon.odlutils.utils.PacketUtils;
-import com.talentica.sdn.odlofsoftswitch.impl.engine.FlowEngine;
+import com.talentica.sdn.odlofsoftswitch.impl.engine.OfFlowEngine;
 import com.talentica.sdn.odlofsoftswitch.impl.engine.MeterEngine;
 import com.talentica.sdn.odlofsoftswitch.impl.rpc.ConnectionImpl;
 
@@ -95,7 +96,7 @@ public class OfCapFlux implements AutoCloseable, PacketProcessingListener{
 		try {
 			// ARP packets lets them flood
 			if (etherType == 0x0806) {
-				FlowEngine.programFloodARPFlow(this.dataBroker, ingressNodeId);
+				FlowEngine.programFloodARPFlow(this.dataBroker, ingressNodeId, Constants.OPENFLOW_OUTPUT_PORT_FLOOD);
 				return;
 			}
 
@@ -128,8 +129,8 @@ public class OfCapFlux implements AutoCloseable, PacketProcessingListener{
 			}
 			
 			NodeConnectorRef egressNodeConnectorRef = rules.get(ingressNodeId).get(dstMac);
-			Uri ingressOutputPort = Constants.FLOOD_OUTPUT_PORT;
-		    Uri egressOutputPort =  Constants.FLOOD_OUTPUT_PORT;
+			Uri ingressOutputPort = Constants.OPENFLOW_OUTPUT_PORT_FLOOD;
+		    Uri egressOutputPort =  Constants.OPENFLOW_OUTPUT_PORT_FLOOD;
 			if(egressNodeConnectorRef!=null){
 				ingressOutputPort = new Uri(CommonUtils.getNodeConnectorRef(ingressNodeConnectorRef));
 				egressOutputPort = new Uri(CommonUtils.getNodeConnectorRef(egressNodeConnectorRef));
@@ -171,8 +172,8 @@ public class OfCapFlux implements AutoCloseable, PacketProcessingListener{
 	}
 
 	private void programL2Flows(NodeId ingressNodeId, Uri ingressOutputPort, Uri egressOutputPort, User srcUser, User dstUser) throws OdlDataStoreException {
-		FlowEngine.programL2Flow(this.dataBroker, ingressNodeId, egressOutputPort, srcUser.getMacAddress(), dstUser.getMacAddress(), srcUser.getUserRole());
-		FlowEngine.programL2Flow(this.dataBroker, ingressNodeId, ingressOutputPort, dstUser.getMacAddress(), srcUser.getMacAddress(), srcUser.getUserRole());
+		OfFlowEngine.programL2Flow(this.dataBroker, ingressNodeId, egressOutputPort, srcUser.getMacAddress(), dstUser.getMacAddress(), srcUser.getUserRole());
+		OfFlowEngine.programL2Flow(this.dataBroker, ingressNodeId, ingressOutputPort, dstUser.getMacAddress(), srcUser.getMacAddress(), srcUser.getUserRole());
 	}
 	
 	private void programMeters(NodeId ingressNodeId) throws OdlDataStoreException {

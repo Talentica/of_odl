@@ -27,6 +27,8 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 
 import com.talentica.sdn.odlcommon.odlutils.exception.OdlDataStoreException;
 import com.talentica.sdn.odlcommon.odlutils.utils.CommonUtils;
+import com.talentica.sdn.odlcommon.odlutils.utils.Constants;
+import com.talentica.sdn.odlcommon.odlutils.utils.FlowUtils;
 
 
 
@@ -49,34 +51,17 @@ public class MeterEngine {
 	 * @throws OdlDataStoreException
 	 */
 	public static void createGuestMeter(DataBroker dataBroker, NodeId nodeId) throws OdlDataStoreException {
-		meterBuilder.setMeterId(new MeterId(1L));
-		meterBuilder.setKey(new MeterKey(new MeterId(1L)));
+		meterBuilder.setMeterId(new MeterId(Constants.METER_ID_GUEST));
+		meterBuilder.setKey(new MeterKey(new MeterId(Constants.METER_ID_GUEST)));
 		meterBuilder.setContainerName("guestMeterContainer");
 		meterBuilder.setMeterName("guestMeter");
 		meterBuilder.setFlags(new MeterFlags(false, true, false, false));
-		
-        meterBuilder.setMeterBandHeaders(new MeterBandHeadersBuilder()
-                .setMeterBandHeader(Collections.singletonList(new MeterBandHeaderBuilder()
-                        .setBandId(new BandId(0L))
-                        .setBandRate(50000L)
-                        .setMeterBandTypes(new MeterBandTypesBuilder()
-                        		.setFlags(new MeterBandType(true, false, false))
-                        		.build())
-                        .setBandBurstSize(0L)
-                        .setBandType(new DropBuilder()
-                                .setDropRate(500L)
-                                .setDropBurstSize(0L)
-                                .build())
-                        .build()))
-                .build());
+		createDropMeterband(meterBuilder, Constants.BAND_RATE_KB, Constants.DROP_RATE_KB_GUEST);
         Meter meter = meterBuilder.build();
-        
-        InstanceIdentifier<Meter> meterIID = InstanceIdentifier.create(Nodes.class).child(Node.class, new NodeKey(nodeId))
-                .augmentation(FlowCapableNode.class).child(Meter.class, new MeterKey(meter.getMeterId()));
-        
-		CommonUtils.writeData(dataBroker, LogicalDatastoreType.CONFIGURATION, meterIID, meter,true);
+        FlowUtils.writeMeterToDataStore(dataBroker, meter, nodeId);
 	}
 	
+
 	/**
 	 * 
 	 * @param dataBroker
@@ -84,32 +69,31 @@ public class MeterEngine {
 	 * @throws OdlDataStoreException
 	 */
 	public static void createUserMeter(DataBroker dataBroker, NodeId nodeId) throws OdlDataStoreException {
-		meterBuilder.setMeterId(new MeterId(2L));
-		meterBuilder.setKey(new MeterKey(new MeterId(2L)));
+		meterBuilder.setMeterId(new MeterId(Constants.METER_ID_EMPLOYEE));
+		meterBuilder.setKey(new MeterKey(new MeterId(Constants.METER_ID_EMPLOYEE)));
 		meterBuilder.setContainerName("userMeterContainer");
 		meterBuilder.setMeterName("userMeter");
 		meterBuilder.setFlags(new MeterFlags(false, true, false, false));
-		
-        meterBuilder.setMeterBandHeaders(new MeterBandHeadersBuilder()
+		createDropMeterband(meterBuilder, Constants.BAND_RATE_KB, Constants.DROP_RATE_KB_EMPLOYEE);
+        Meter meter = meterBuilder.build();
+        FlowUtils.writeMeterToDataStore(dataBroker, meter, nodeId);
+	}
+	
+	private static void createDropMeterband(MeterBuilder meterBuilder, long bandRateKb, long dropRateKb) {
+		meterBuilder.setMeterBandHeaders(new MeterBandHeadersBuilder()
                 .setMeterBandHeader(Collections.singletonList(new MeterBandHeaderBuilder()
                         .setBandId(new BandId(0L))
-                        .setBandRate(50000L)
+                        .setBandRate(bandRateKb)
                         .setMeterBandTypes(new MeterBandTypesBuilder()
                         		.setFlags(new MeterBandType(true, false, false))
                         		.build())
                         .setBandBurstSize(0L)
                         .setBandType(new DropBuilder()
-                                .setDropRate(10000L)
+                                .setDropRate(dropRateKb)
                                 .setDropBurstSize(0L)
                                 .build())
                         .build()))
-                .build());
-        Meter meter = meterBuilder.build();
-        
-        InstanceIdentifier<Meter> meterIID = InstanceIdentifier.create(Nodes.class).child(Node.class, new NodeKey(nodeId))
-                .augmentation(FlowCapableNode.class).child(Meter.class, new MeterKey(meter.getMeterId()));
-        
-		CommonUtils.writeData(dataBroker, LogicalDatastoreType.CONFIGURATION, meterIID, meter,true);
+                .build());		
 	}
 	
 

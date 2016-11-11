@@ -22,13 +22,15 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 import com.talentica.sdn.odlcommon.odlutils.engine.AuthenticationEngine;
+import com.talentica.sdn.odlcommon.odlutils.engine.FlowEngine;
 import com.talentica.sdn.odlcommon.odlutils.exception.AuthServerRestFailedException;
 import com.talentica.sdn.odlcommon.odlutils.exception.OdlDataStoreException;
 import com.talentica.sdn.odlcommon.odlutils.to.CapFluxPacket;
 import com.talentica.sdn.odlcommon.odlutils.to.User;
 import com.talentica.sdn.odlcommon.odlutils.utils.CommonUtils;
+import com.talentica.sdn.odlcommon.odlutils.utils.Constants;
 import com.talentica.sdn.odlcommon.odlutils.utils.PacketUtils;
-import com.talentica.sdn.odlswitch.impl.engine.FlowEngine;
+import com.talentica.sdn.odlswitch.impl.engine.OvsFlowEngine;
 import com.talentica.sdn.odlswitch.impl.rpc.ConnectionImpl;
 
 /**
@@ -91,7 +93,7 @@ public class CapFlux implements AutoCloseable, PacketProcessingListener{
 		try {
 			// ARP packets lets them flood
 			if (etherType == 0x0806) {
-				FlowEngine.programFloodARPFlow(this.dataBroker, ingressNodeId);
+				FlowEngine.programFloodARPFlow(this.dataBroker, ingressNodeId, Constants.OPENFLOW_OUTPUT_PORT_FLOOD);
 				return;
 			}
 
@@ -131,8 +133,8 @@ public class CapFlux implements AutoCloseable, PacketProcessingListener{
 				edgeRuleMacFlags.put(srcMac, false);
 				// add redirection flows
 				if (dstPort == 80 && !edgeRuleMacFlags.get(srcMac)) {
-					FlowEngine.addReverseflow(this.dataBroker, ingressNodeConnectorId, srcMac, dstMac, srcIP,dstIP, dstPort);
-					FlowEngine.addforwardflow(this.dataBroker, ingressNodeConnectorId, srcMac, dstMac, srcIP,dstIP, dstPort);
+					FlowEngine.addReverseflow(this.dataBroker, ingressNodeId, Constants.OPENFLOW_OUTPUT_PORT_NORMAL,srcMac, dstMac, srcIP,dstIP, dstPort);
+					FlowEngine.addforwardflow(this.dataBroker, ingressNodeId, Constants.OPENFLOW_OUTPUT_PORT_NORMAL, srcMac, dstMac, srcIP,dstIP, dstPort);
 					edgeRuleMacFlags.put(srcMac, true);
 				}
 			}
@@ -146,8 +148,8 @@ public class CapFlux implements AutoCloseable, PacketProcessingListener{
 	}
 
 	private void programL2Flows(NodeId ingressNodeId, User srcUser, User dstUser) throws OdlDataStoreException  {
-		FlowEngine.programL2Flow(this.dataBroker, ingressNodeId, srcUser.getMacAddress(), dstUser.getMacAddress(), srcUser.getUserRole());
-		FlowEngine.programL2Flow(this.dataBroker, ingressNodeId, dstUser.getMacAddress(), srcUser.getMacAddress(), dstUser.getUserRole());
+		OvsFlowEngine.programL2Flow(this.dataBroker, ingressNodeId, srcUser.getMacAddress(), dstUser.getMacAddress(), srcUser.getUserRole());
+		OvsFlowEngine.programL2Flow(this.dataBroker, ingressNodeId, dstUser.getMacAddress(), srcUser.getMacAddress(), srcUser.getUserRole());
 	}
 	
 }
