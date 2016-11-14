@@ -44,12 +44,30 @@ public class PacketUtils {
 	
 	/**
 	 * 
-	 * @param dstMac
+	 * @param user
 	 * @return
 	 */
-	public static boolean isDestCaptivePortal(String dstMac){
-		return dstMac.equalsIgnoreCase(Constants.CAPTIVE_PORTAL_MAC);
-			
+	public static boolean isUserCaptivePortal(User user){
+		return Constants.CAPTIVE_PORTAL_MAC.equalsIgnoreCase(user.getMacAddress());
+	}
+	
+	/**
+	 * 
+	 * @param user
+	 * @return
+	 */
+	public static boolean isUserActivated(User user) {
+		return user.isExist() && user.isActivated();
+	}
+	
+	/**
+	 * 
+	 * @param srcUser
+	 * @param dstUser
+	 * @return
+	 */
+	public static boolean isCaptivePortal(User srcUser, User dstUser){
+		return isUserCaptivePortal(srcUser) || isUserCaptivePortal(dstUser);
 	}
 	
 	/**
@@ -59,11 +77,17 @@ public class PacketUtils {
 	 * @return
 	 */
 	public static boolean isSrcDstActivated(User srcUser, User dstUser) {
-		return srcUser.isExist() && dstUser.isExist() && srcUser.isActivated() && dstUser.isActivated();
+		return isUserActivated(srcUser) && isUserActivated(dstUser);
 	}
 
-	public static boolean isUserActivated(User user) {
-		return user.isExist() && user.isActivated();
+	/**
+	 * 
+	 * @param srcUser
+	 * @param dstUser
+	 * @return
+	 */
+	public static boolean isFlowValid(User srcUser, User dstUser) {
+		return isSrcDstActivated(srcUser, dstUser) || isCaptivePortal(srcUser, dstUser);
 	}
-
+	
 }

@@ -18,10 +18,8 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.flow.types.rev131026.instru
 import org.opendaylight.yang.gen.v1.urn.opendaylight.inventory.rev130819.NodeId;
 
 import com.google.common.collect.Lists;
-import com.talentica.sdn.odlcommon.odlutils.exception.AuthServerRestFailedException;
 import com.talentica.sdn.odlcommon.odlutils.exception.OdlDataStoreException;
 import com.talentica.sdn.odlcommon.odlutils.to.CapFluxPacket;
-import com.talentica.sdn.odlcommon.odlutils.to.User;
 import com.talentica.sdn.odlcommon.odlutils.utils.CommonUtils;
 import com.talentica.sdn.odlcommon.odlutils.utils.Constants;
 import com.talentica.sdn.odlcommon.odlutils.utils.FlowUtils;
@@ -63,16 +61,6 @@ public class FlowEngine {
 	
 	
 	/**
-	 * 
-	 * @param dataBroker
-	 * @param nodeId
-	 * @param outputPort
-	 * @param srcMac
-	 * @param dstMac
-	 * @param srcIp
-	 * @param dstIp
-	 * @param dstPort
-	 * @throws OdlDataStoreException
 	 */
 	public static void addforwardflow(DataBroker dataBroker, NodeId nodeId, Uri outputPort, CapFluxPacket packet) throws OdlDataStoreException {
 		String srcMac = packet.getSrcMacAddress();
@@ -110,16 +98,13 @@ public class FlowEngine {
 		FlowBuilder flowBuilder = FlowUtils.createFlowBuilder(instructions, matchBuilder,flowId, Constants.ORDER_FORWARDING_RULE);
 		FlowUtils.writeFlowToDataStore(dataBroker, flowBuilder, nodeId);
 	}
+	
 	/**
 	 * 
 	 * @param dataBroker
 	 * @param nodeId
 	 * @param outputPort
-	 * @param srcMac
-	 * @param dstMac
-	 * @param srcIp
-	 * @param dstIp
-	 * @param dstPort
+	 * @param packet
 	 * @throws OdlDataStoreException
 	 */
 	public static void addReverseflow(DataBroker dataBroker,NodeId nodeId, Uri outputPort, CapFluxPacket packet) throws OdlDataStoreException {

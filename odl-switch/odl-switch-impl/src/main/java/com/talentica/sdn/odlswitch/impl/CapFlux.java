@@ -9,7 +9,6 @@ import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.sal.binding.api.BindingAwareBroker.RpcRegistration;
 import org.opendaylight.controller.sal.binding.api.NotificationProviderService;
 import org.opendaylight.controller.sal.binding.api.RpcProviderRegistry;
-import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Uri;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.inventory.rev130819.NodeConnectorId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.inventory.rev130819.NodeConnectorRef;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.inventory.rev130819.NodeId;
@@ -116,13 +115,10 @@ public class CapFlux implements AutoCloseable, PacketProcessingListener{
 			User srcUser = AuthenticationEngine.getUserDetailsFromDB(srcMac);
 			User dstUser = AuthenticationEngine.getUserDetailsFromDB(dstMac);
 			
-			if (PacketUtils.isDestCaptivePortal(dstMac)) {
+			if (PacketUtils.isFlowValid(srcUser,dstUser)) {
 				programL2Flows(ingressNodeId, srcUser, dstUser);
 
-			} else if (PacketUtils.isSrcDstActivated(srcUser,dstUser)){
-				programL2Flows(ingressNodeId, srcUser, dstUser);
-			}
-			else {
+			} else {
 				programRedirectionFlows(ingressNodeId, srcUser, packet);
 			}
 

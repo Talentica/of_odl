@@ -139,13 +139,9 @@ public class OfCapFlux implements AutoCloseable, PacketProcessingListener{
 			
 			programMeters(ingressNodeId);
 			
-			if (PacketUtils.isDestCaptivePortal(dstMac)) {
+			if(PacketUtils.isFlowValid(srcUser,dstUser)){
 				programL2Flows(ingressNodeId, ingressOutputPort, egressOutputPort, srcUser, dstUser);
-
-			} else if (PacketUtils.isSrcDstActivated(srcUser,dstUser)){
-				programL2Flows(ingressNodeId, ingressOutputPort, egressOutputPort, srcUser, dstUser);
-			}
-			else {
+			} else {
 				programRedirectionFlows(ingressNodeId, ingressOutputPort, egressOutputPort, srcUser, packet);
 			}
 		}catch(OdlDataStoreException e){
