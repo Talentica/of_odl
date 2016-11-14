@@ -9,6 +9,7 @@ import org.opendaylight.controller.md.sal.binding.api.DataBroker;
 import org.opendaylight.controller.sal.binding.api.BindingAwareBroker.RpcRegistration;
 import org.opendaylight.controller.sal.binding.api.NotificationProviderService;
 import org.opendaylight.controller.sal.binding.api.RpcProviderRegistry;
+import org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Uri;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.inventory.rev130819.NodeConnectorId;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.inventory.rev130819.NodeConnectorRef;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.inventory.rev130819.NodeId;
@@ -106,9 +107,7 @@ public class CapFlux implements AutoCloseable, PacketProcessingListener{
 			CapFluxPacket packet = PacketUtils.parsePacketFromPayload(payload);
 			String srcMac = packet.getSrcMacAddress();
 			String dstMac = packet.getDestMacAddress();
-			String dstIP = packet.getDestIpAddress();
 			String srcIP = packet.getSrcIpAddress();
-			int dstPort = packet.getDestTcpPort();
 
 			if (!macToIpMap.containsKey(srcIP)) {
 				macToIpMap.put(srcIP, srcMac);
@@ -123,21 +122,10 @@ public class CapFlux implements AutoCloseable, PacketProcessingListener{
 			} else if (PacketUtils.isSrcDstActivated(srcUser,dstUser)){
 				programL2Flows(ingressNodeId, srcUser, dstUser);
 			}
-
 			else {
-				// adds the user to the database and the user’s state is unauthenticated
-				if (!srcUser.isExist()) {
-					AuthenticationEngine.saveUnauthUser(srcIP, srcMac);
-				}
-				// redirection rules must be installed on edge switches only
-				edgeRuleMacFlags.put(srcMac, false);
-				// add redirection flows
-				if (dstPort == 80 && !edgeRuleMacFlags.get(srcMac)) {
-					FlowEngine.addReverseflow(this.dataBroker, ingressNodeId, Constants.OPENFLOW_OUTPUT_PORT_NORMAL,srcMac, dstMac, srcIP,dstIP, dstPort);
-					FlowEngine.addforwardflow(this.dataBroker, ingressNodeId, Constants.OPENFLOW_OUTPUT_PORT_NORMAL, srcMac, dstMac, srcIP,dstIP, dstPort);
-					edgeRuleMacFlags.put(srcMac, true);
-				}
+				programRedirectionFlows(ingressNodeId, srcUser, packet);
 			}
+
 		}catch(OdlDataStoreException e){
 			LOG.error("Exception occured while Odl data store update:: ", e);
 		} catch (AuthServerRestFailedException e) {
@@ -150,6 +138,25 @@ public class CapFlux implements AutoCloseable, PacketProcessingListener{
 	private void programL2Flows(NodeId ingressNodeId, User srcUser, User dstUser) throws OdlDataStoreException  {
 		OvsFlowEngine.programL2Flow(this.dataBroker, ingressNodeId, srcUser.getMacAddress(), dstUser.getMacAddress(), srcUser.getUserRole());
 		OvsFlowEngine.programL2Flow(this.dataBroker, ingressNodeId, dstUser.getMacAddress(), srcUser.getMacAddress(), srcUser.getUserRole());
+	}
+	
+	private void programRedirectionFlows(NodeId ingressNodeId, User srcUser, CapFluxPacket packet)
+			throws AuthServerRestFailedException, OdlDataStoreException {
+		String srcMac = packet.getSrcMacAddress();
+		String srcIP = packet.getSrcIpAddress();
+		int dstPort = packet.getDestTcpPort();
+		// adds the user to the database and the user’s state is unauthenticated
+		if (!srcUser.isExist()) {
+			AuthenticationEngine.saveUnauthUser(srcIP, srcMac);
+		}
+		// redirection rules must be installed on edge switches only
+		edgeRuleMacFlags.put(packet.getSrcMacAddress(), false);
+		// add redirection flows
+		if (dstPort == Constants.HTTP_PORT && !edgeRuleMacFlags.get(srcMac)) {
+			FlowEngine.addReverseflow(this.dataBroker, ingressNodeId, Constants.OPENFLOW_OUTPUT_PORT_NORMAL, packet);
+			FlowEngine.addforwardflow(this.dataBroker, ingressNodeId, Constants.OPENFLOW_OUTPUT_PORT_NORMAL, packet);
+			edgeRuleMacFlags.put(srcMac, true);
+		}
 	}
 	
 }

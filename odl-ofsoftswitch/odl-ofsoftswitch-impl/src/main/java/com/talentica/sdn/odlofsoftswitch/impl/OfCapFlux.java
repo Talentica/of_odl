@@ -109,9 +109,7 @@ public class OfCapFlux implements AutoCloseable, PacketProcessingListener{
 			CapFluxPacket packet = PacketUtils.parsePacketFromPayload(payload);
 			String srcMac = packet.getSrcMacAddress();
 			String dstMac = packet.getDestMacAddress();
-			String dstIP = packet.getDestIpAddress();
 			String srcIP = packet.getSrcIpAddress();
-			int dstPort = packet.getDestTcpPort();
 			
 			//Map mac to IP for validating the new user request by connectService
 			if (!macToIpMap.containsKey(srcIP)) {
@@ -147,20 +145,8 @@ public class OfCapFlux implements AutoCloseable, PacketProcessingListener{
 			} else if (PacketUtils.isSrcDstActivated(srcUser,dstUser)){
 				programL2Flows(ingressNodeId, ingressOutputPort, egressOutputPort, srcUser, dstUser);
 			}
-
 			else {
-				// adds the user to the database and the user’s state is unauthenticated
-				if (!srcUser.isExist()) {
-					AuthenticationEngine.saveUnauthUser(srcIP, srcMac);
-				}
-				// redirection rules must be installed on edge switches only
-				edgeRuleMacFlags.put(srcMac, false);
-				// add redirection flows
-				if (dstPort == 80 && !edgeRuleMacFlags.get(srcMac)) {
-					FlowEngine.addReverseflow(this.dataBroker, ingressNodeId, ingressOutputPort, srcMac, dstMac,srcIP, dstIP, dstPort);
-					FlowEngine.addforwardflow(this.dataBroker, ingressNodeId, egressOutputPort, srcMac, dstMac,srcIP, dstIP, dstPort);
-					edgeRuleMacFlags.put(srcMac, true);
-				}
+				programRedirectionFlows(ingressNodeId, ingressOutputPort, egressOutputPort, srcUser, packet);
 			}
 		}catch(OdlDataStoreException e){
 			LOG.error("Exception occured while Odl data store update:: ", e);
@@ -179,6 +165,25 @@ public class OfCapFlux implements AutoCloseable, PacketProcessingListener{
 	private void programMeters(NodeId ingressNodeId) throws OdlDataStoreException {
 		MeterEngine.createGuestMeter(this.dataBroker, ingressNodeId);
 		MeterEngine.createUserMeter(this.dataBroker, ingressNodeId);
+	}
+	
+	private void programRedirectionFlows(NodeId ingressNodeId, Uri ingressOutputPort, Uri egressOutputPort,
+			User srcUser, CapFluxPacket packet) throws AuthServerRestFailedException, OdlDataStoreException {
+		String srcMac = packet.getSrcMacAddress();
+		String srcIP = packet.getSrcIpAddress();
+		int dstPort = packet.getDestTcpPort();
+		// adds the user to the database and the user’s state is unauthenticated
+		if (!srcUser.isExist()) {
+			AuthenticationEngine.saveUnauthUser(srcIP, srcMac);
+		}
+		// redirection rules must be installed on edge switches only
+		edgeRuleMacFlags.put(packet.getSrcMacAddress(), false);
+		// add redirection flows
+		if (dstPort == Constants.HTTP_PORT && !edgeRuleMacFlags.get(srcMac)) {
+			FlowEngine.addReverseflow(this.dataBroker, ingressNodeId, ingressOutputPort, packet);
+			FlowEngine.addforwardflow(this.dataBroker, ingressNodeId, egressOutputPort, packet);
+			edgeRuleMacFlags.put(srcMac, true);
+		}
 	}
 	
 }

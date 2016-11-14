@@ -48,7 +48,9 @@ public interface Constants {
     
     static final String CAPTIVE_PORTAL_MAC = "00:00:00:00:00:09";
 	static final String CAPTIVE_PORTAL_IP = "172.29.3.3";
-	static final Integer CAPTIVE_PORTAL_SERVER_PORT = 9090;
+	static final int CAPTIVE_PORTAL_SERVER_PORT = 9090;
+	static final int HTTP_PORT = 80;
+	
     
     static final String ROLE_GUEST = "GUEST";
     static final String ROLE_EMPLOYEE = "USER";

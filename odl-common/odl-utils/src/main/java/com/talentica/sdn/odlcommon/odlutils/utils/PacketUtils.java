@@ -62,5 +62,8 @@ public class PacketUtils {
 		return srcUser.isExist() && dstUser.isExist() && srcUser.isActivated() && dstUser.isActivated();
 	}
 
+	public static boolean isUserActivated(User user) {
+		return user.isExist() && user.isActivated();
+	}
 
 }

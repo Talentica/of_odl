@@ -18,7 +18,10 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.flow.types.rev131026.instru
 import org.opendaylight.yang.gen.v1.urn.opendaylight.inventory.rev130819.NodeId;
 
 import com.google.common.collect.Lists;
+import com.talentica.sdn.odlcommon.odlutils.exception.AuthServerRestFailedException;
 import com.talentica.sdn.odlcommon.odlutils.exception.OdlDataStoreException;
+import com.talentica.sdn.odlcommon.odlutils.to.CapFluxPacket;
+import com.talentica.sdn.odlcommon.odlutils.to.User;
 import com.talentica.sdn.odlcommon.odlutils.utils.CommonUtils;
 import com.talentica.sdn.odlcommon.odlutils.utils.Constants;
 import com.talentica.sdn.odlcommon.odlutils.utils.FlowUtils;
@@ -36,6 +39,7 @@ public class FlowEngine {
 	 * 
 	 * @param dataBroker
 	 * @param nodeId
+	 * @param outputPort
 	 * @throws OdlDataStoreException
 	 */
 	public static void programFloodARPFlow(DataBroker dataBroker, NodeId nodeId, Uri outputPort) throws OdlDataStoreException {
@@ -70,12 +74,16 @@ public class FlowEngine {
 	 * @param dstPort
 	 * @throws OdlDataStoreException
 	 */
-	public static void addforwardflow(DataBroker dataBroker, NodeId nodeId, Uri outputPort, String srcMac, String dstMac, String srcIp, String dstIp,
-			int dstPort) throws OdlDataStoreException {
+	public static void addforwardflow(DataBroker dataBroker, NodeId nodeId, Uri outputPort, CapFluxPacket packet) throws OdlDataStoreException {
+		String srcMac = packet.getSrcMacAddress();
+		String dstMac = packet.getDestMacAddress();
+		String dstIP = packet.getDestIpAddress();
+		String srcIP = packet.getSrcIpAddress();
+		int dstPort = packet.getDestTcpPort();		
 		MatchBuilder matchBuilder = new MatchBuilder();
 		CommonUtils.createEthMatch(matchBuilder, new MacAddress(srcMac), new MacAddress(dstMac), null);
-		Ipv4Prefix srcip = new Ipv4Prefix(srcIp + "/32");
-		Ipv4Prefix dstip = new Ipv4Prefix(dstIp + "/32");
+		Ipv4Prefix srcip = new Ipv4Prefix(srcIP + "/32");
+		Ipv4Prefix dstip = new Ipv4Prefix(dstIP + "/32");
 		CommonUtils.createL3IPv4Match(matchBuilder, srcip, dstip);
 		CommonUtils.createSetTcpDstMatch(matchBuilder, new PortNumber(dstPort));
 		
@@ -102,7 +110,6 @@ public class FlowEngine {
 		FlowBuilder flowBuilder = FlowUtils.createFlowBuilder(instructions, matchBuilder,flowId, Constants.ORDER_FORWARDING_RULE);
 		FlowUtils.writeFlowToDataStore(dataBroker, flowBuilder, nodeId);
 	}
-	
 	/**
 	 * 
 	 * @param dataBroker
@@ -115,11 +122,16 @@ public class FlowEngine {
 	 * @param dstPort
 	 * @throws OdlDataStoreException
 	 */
-	public static void addReverseflow(DataBroker dataBroker,NodeId nodeId, Uri outputPort, String srcMac, String dstMac, String srcIp, String dstIp, int dstPort) throws OdlDataStoreException {
+	public static void addReverseflow(DataBroker dataBroker,NodeId nodeId, Uri outputPort, CapFluxPacket packet) throws OdlDataStoreException {
+		String srcMac = packet.getSrcMacAddress();
+		String dstMac = packet.getDestMacAddress();
+		String dstIP = packet.getDestIpAddress();
+		String srcIP = packet.getSrcIpAddress();
+		int dstPort = packet.getDestTcpPort();
 		MatchBuilder matchBuilder = new MatchBuilder();
 		CommonUtils.createEthMatch(matchBuilder, new MacAddress(Constants.CAPTIVE_PORTAL_MAC),new MacAddress(srcMac), null);
 		Ipv4Prefix srcip = new Ipv4Prefix(Constants.CAPTIVE_PORTAL_IP + "/32");
-		Ipv4Prefix dstip = new Ipv4Prefix(srcIp + "/32");
+		Ipv4Prefix dstip = new Ipv4Prefix(srcIP + "/32");
 		CommonUtils.createL3IPv4Match(matchBuilder, srcip, dstip);
 		CommonUtils.createSetTcpSrcMatch(matchBuilder, new PortNumber(Constants.CAPTIVE_PORTAL_SERVER_PORT));
 		List<Action> actionList = new ArrayList<>();
@@ -128,7 +140,7 @@ public class FlowEngine {
 		FlowUtils.creteDlSrcAction(actionList, dstMac, 0);
 		
 		// Set new src action
-		FlowUtils.createNewSrcAction(actionList,dstIp, 1);
+		FlowUtils.createNewSrcAction(actionList,dstIP, 1);
 
 		// Set tcp src action
 		FlowUtils.createTcpSrcAction(actionList,dstPort, 2);
@@ -145,5 +157,5 @@ public class FlowEngine {
 		FlowBuilder flowBuilder = FlowUtils.createFlowBuilder(instructions, matchBuilder,flowId, Constants.ORDER_FORWARDING_RULE);
 		FlowUtils.writeFlowToDataStore(dataBroker, flowBuilder, nodeId);
 	}
-
+	
 }

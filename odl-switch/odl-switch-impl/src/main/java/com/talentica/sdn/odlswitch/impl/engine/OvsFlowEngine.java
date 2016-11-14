@@ -29,6 +29,9 @@ import com.talentica.sdn.odlcommon.odlutils.utils.FlowUtils;
  */
 public class OvsFlowEngine {
 	
+	private OvsFlowEngine(){
+		//utility class, do not instantiate
+	}
 	
 	/**
 	 * 
